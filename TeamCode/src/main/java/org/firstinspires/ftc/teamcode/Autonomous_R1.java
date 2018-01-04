@@ -14,6 +14,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 /**
  * Created by Lyesome on 2018-01-03.
  */
+
 @Autonomous(name="Indiana Gary - Position R1", group="Linear Opmode")
 //@Disabled
 
@@ -35,7 +36,7 @@ public class Autonomous_R1 extends LinearOpMode {
     private Servo JewelArm = null;
 
     // The IMU sensor object
-    BNO055IMU imu;
+    private BNO055IMU imu;
 
     // State used for updating telemetry
     Orientation angles;
@@ -116,6 +117,7 @@ public class Autonomous_R1 extends LinearOpMode {
         DriveForward(Drive_Power, 12);
         GlyphRelease();
         DriveBackward(Drive_Power, 2);
+
 
     }
 
@@ -232,10 +234,10 @@ public class Autonomous_R1 extends LinearOpMode {
             telemetry.addData("End Angle: ", initialAngle + Angle);
             telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
-            motorFL.setPower(1.0);
-            motorFR.setPower(-1.0);
-            motorBL.setPower(1.0);
-            motorBR.setPower(-1.0);
+            motorFL.setPower(Drive_Power);
+            motorFR.setPower(-Drive_Power);
+            motorBL.setPower(Drive_Power);
+            motorBR.setPower(-Drive_Power);
         }
         StopWheels();
     }
@@ -248,10 +250,10 @@ public class Autonomous_R1 extends LinearOpMode {
             telemetry.addData("End Angle: ", initialAngle - Angle);
             telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
-            motorFL.setPower(-1.0);
-            motorFR.setPower(1.0);
-            motorBL.setPower(-1.0);
-            motorBR.setPower(1.0);
+            motorFL.setPower(-Drive_Power);
+            motorFR.setPower(Drive_Power);
+            motorBL.setPower(-Drive_Power);
+            motorBR.setPower(Drive_Power);
         }
         StopWheels();
     }
