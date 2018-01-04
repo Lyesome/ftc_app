@@ -84,7 +84,7 @@ public class Autonomous_BoxTrot extends LinearOpMode {
 
     private void DriveForward(double power, double distance) {
         //Drive forward distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 133.8;
+        double scaleFactor = 89.17;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition + (distance * scaleFactor));
         telemetry.addData("Driving Forward: ", Double.toString(distance) + " inches");
@@ -107,7 +107,7 @@ public class Autonomous_BoxTrot extends LinearOpMode {
 
     private void DriveBackward(double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 133.8;
+        double scaleFactor = 89.17;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
         telemetry.addData("Driving Backward: ", Double.toString(distance) + " inches");
@@ -129,7 +129,7 @@ public class Autonomous_BoxTrot extends LinearOpMode {
 
     private void DriveRight(double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 267.6;
+        double scaleFactor = 178.34;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
         telemetry.addData("Driving Right: ", Double.toString(distance) + " inches");
@@ -150,7 +150,7 @@ public class Autonomous_BoxTrot extends LinearOpMode {
     }
     private void DriveLeft(double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 267.6;
+        double scaleFactor = 178.34;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition + (distance * scaleFactor));
         telemetry.addData("Driving Left: ", Double.toString(distance) + " inches");
