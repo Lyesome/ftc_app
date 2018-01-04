@@ -22,7 +22,7 @@ public class Autonomous_TurnTest extends LinearOpMode {
     private DcMotor motorFR = null;
     private DcMotor motorBL = null;
     private DcMotor motorBR = null;
-    private static double Drive_Power = 0.5;
+    private static double Drive_Power = 0.2;
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -205,11 +205,11 @@ public class Autonomous_TurnTest extends LinearOpMode {
     }
     private void TurnLeft(double Angle){
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        telemetry.addData("Turning Left: ", Angle);
-        telemetry.addData("Start Angle: ", initialAngle);
-        telemetry.addData("End Angle: ", initialAngle + Angle);
-        telemetry.update();
         while (imu.getAngularOrientation().firstAngle >= initialAngle - Angle) {
+            telemetry.addData("Turning Left: ", Angle);
+            telemetry.addData("Start Angle: ", initialAngle);
+            telemetry.addData("End Angle: ", initialAngle - Angle);
+            telemetry.update();
             motorFL.setPower(-1.0);
             motorFR.setPower(1.0);
             motorBL.setPower(-1.0);
