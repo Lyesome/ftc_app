@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -69,10 +70,9 @@ public class DriverMode extends LinearOpMode {
     long Position2;
     long Position3;
     long GotoPosition;
-    int GrabberLAngle = 180;
-    int GrabberRAngle = 180;
+
     boolean bAuto;
-    double motorPower;
+    double LifterPower;
 
     @Override
     public void runOpMode() {
@@ -100,13 +100,15 @@ public class DriverMode extends LinearOpMode {
         GrabberR = hardwareMap.servo.get("GrabberR");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorPower = 0.2;
+        LifterPower = 0.2;
+
+        //Set preset positions for Glyph Lifter
         PositionStart = motorLift.getCurrentPosition();
         PositionMax = PositionStart + 1680;
         Position1 = PositionStart + 200;
         Position2 = PositionStart + 600;
         Position3 = PositionStart + 1200;
-        bAuto = false;
+        bAuto = false; //Used to enable auto motion of Glyph Lifter to preset Positions
         GotoPosition = PositionStart;
 
         // eg: Set the drive motor directions:
@@ -140,23 +142,29 @@ public class DriverMode extends LinearOpMode {
             motorBL.setPower(v3);
             motorBR.setPower(v4);
 
+            //Glyph Grabber Control
             if (gamepad2.right_trigger > 0) {
                 GrabberL.setPosition(gamepad2.right_trigger * 0.2 + 0.8);
                 GrabberR.setPosition(1 - (gamepad2.right_trigger * 0.2 + 0.8));
             }
 
+            //Glyph Lifter Control
             if ((gamepad2.left_stick_y > 0) || (gamepad2.left_stick_y < 0)) {
                 if ((gamepad2.left_stick_y < 0) && (motorLift.getCurrentPosition() <= PositionMax)) {
-                    motorLift.setPower(-gamepad2.left_stick_y*motorPower*1.1);
+                    motorLift.setPower(-gamepad2.left_stick_y*LifterPower*1.1);
                 }else {
                     if ((gamepad2.left_stick_y > 0) && (motorLift.getCurrentPosition() >= PositionStart)) {
-                        motorLift.setPower(-gamepad2.left_stick_y*motorPower*0.9);
+                        motorLift.setPower(-gamepad2.left_stick_y*LifterPower*0.9);
                     } else {
                         motorLift.setPower(0);
                     }
                 }
+                //Turn off auto motion as soon as left stick is moved
+                telemetry.addData("Lifter at Position: ", motorLift.getCurrentPosition());
+                telemetry.update();
                 bAuto = false;
             }else {
+                //Go to preset positions when corresponding button is pressed
                 if (gamepad2.a) {
                     GotoPosition = Position1;
                 }
@@ -167,15 +175,23 @@ public class DriverMode extends LinearOpMode {
                     GotoPosition = Position3;
                 }
                 if (gamepad2.a || gamepad2.x || gamepad2.y) {
+                    //Turn on auto motion
                     bAuto = true;
                 }
 
                 if ((motorLift.getCurrentPosition() < GotoPosition) && bAuto){
-                    motorLift.setPower(motorPower);
+                    telemetry.addData("Lifter at Position: ", motorLift.getCurrentPosition());
+                    telemetry.addData("RAISING to Position: ", GotoPosition);
+                    telemetry.update();
+                    motorLift.setPower(LifterPower*1.1);
                 }else{
                     if ((motorLift.getCurrentPosition() > GotoPosition) && bAuto){
-                        motorLift.setPower(-motorPower);
+                        telemetry.addData("Lifter at Position: ", motorLift.getCurrentPosition());
+                        telemetry.addData("LOWERING to Position: ", GotoPosition);
+                        telemetry.update();
+                        motorLift.setPower(-LifterPower*0.9);
                     }else{
+                        //Turn off auto motion once at position
                         bAuto = false;
                         motorLift.setPower(0);
                     }
