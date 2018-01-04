@@ -245,7 +245,7 @@ public class Autonomous_R1 extends LinearOpMode {
         while (imu.getAngularOrientation().firstAngle > (initialAngle - Angle)) {
             telemetry.addData("Turning Left: ", Angle);
             telemetry.addData("Start Angle: ", initialAngle);
-            telemetry.addData("End Angle: ", initialAngle + Angle);
+            telemetry.addData("End Angle: ", initialAngle - Angle);
             telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
             motorFL.setPower(-1.0);
