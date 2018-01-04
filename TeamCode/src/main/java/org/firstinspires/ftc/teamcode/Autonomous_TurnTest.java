@@ -90,13 +90,13 @@ public class Autonomous_TurnTest extends LinearOpMode {
 
 
     private void StopWheels() {
-        telemetry.addData("Wheels: ", "Stopped");
-        telemetry.update();
+        //telemetry.addData("Wheels: ", "Stopped");
+        //telemetry.update();
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
-        sleep(500);
+        sleep(1000);
     }
 
 
