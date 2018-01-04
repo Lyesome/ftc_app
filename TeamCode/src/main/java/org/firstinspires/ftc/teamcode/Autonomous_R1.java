@@ -24,7 +24,7 @@ public class Autonomous_R1 extends LinearOpMode {
     private DcMotor motorFR = null;
     private DcMotor motorBL = null;
     private DcMotor motorBR = null;
-    private static double Drive_Power = 0.5;
+    private static double Drive_Power = 0.25;
 
     private DcMotor motorLift = null;
     private Servo GrabberR = null;
