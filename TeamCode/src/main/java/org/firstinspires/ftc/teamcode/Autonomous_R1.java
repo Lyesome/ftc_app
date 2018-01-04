@@ -226,10 +226,11 @@ public class Autonomous_R1 extends LinearOpMode {
     public void TurnRight(double Angle){
 
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle < initialAngle + Angle) {
+        while (imu.getAngularOrientation().firstAngle < (initialAngle + Angle)) {
             telemetry.addData("Turning Right: ", Angle);
             telemetry.addData("Start Angle: ", initialAngle);
             telemetry.addData("End Angle: ", initialAngle + Angle);
+            telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
             motorFL.setPower(1.0);
             motorFR.setPower(-1.0);
@@ -241,11 +242,12 @@ public class Autonomous_R1 extends LinearOpMode {
 
     private void TurnLeft(double Angle){
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        telemetry.addData("Turning Left: ", Angle);
-        telemetry.addData("Start Angle: ", initialAngle);
-        telemetry.addData("End Angle: ", initialAngle + Angle);
-        telemetry.update();
-        while (imu.getAngularOrientation().firstAngle >= initialAngle - Angle) {
+        while (imu.getAngularOrientation().firstAngle > (initialAngle - Angle)) {
+            telemetry.addData("Turning Left: ", Angle);
+            telemetry.addData("Start Angle: ", initialAngle);
+            telemetry.addData("End Angle: ", initialAngle + Angle);
+            telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
+            telemetry.update();
             motorFL.setPower(-1.0);
             motorFR.setPower(1.0);
             motorBL.setPower(-1.0);
