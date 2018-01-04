@@ -195,6 +195,7 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.addData("Turning Right: ", Angle);
             telemetry.addData("Start Angle: ", initialAngle);
             telemetry.addData("End Angle: ", initialAngle + Angle);
+            telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
             motorFL.setPower(1.0);
             motorFR.setPower(-1.0);
@@ -209,6 +210,7 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.addData("Turning Left: ", Angle);
             telemetry.addData("Start Angle: ", initialAngle);
             telemetry.addData("End Angle: ", initialAngle - Angle);
+            telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
             motorFL.setPower(-1.0);
             motorFR.setPower(1.0);
