@@ -192,7 +192,7 @@ public class Autonomous_TurnTest extends LinearOpMode {
     public void TurnRight(double Angle){
 
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle < initialAngle + Angle) {
+        while (imu.getAngularOrientation().firstAngle >= Angle) {
             telemetry.addData("Turning Right: ", Angle);
             telemetry.addData("Start Angle: ", initialAngle);
             telemetry.addData("End Angle: ", initialAngle + Angle);
@@ -207,11 +207,12 @@ public class Autonomous_TurnTest extends LinearOpMode {
     }
     private void TurnLeft(double Angle){
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle > initialAngle - Angle) {
+        while (imu.getAngularOrientation().firstAngle <=Angle) {
             telemetry.addData("Turning Left: ", Angle);
             telemetry.addData("Start Angle: ", initialAngle);
             telemetry.addData("End Angle: ", initialAngle - Angle);
             telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
+
             telemetry.update();
             motorFL.setPower(-Drive_Power);
             motorFR.setPower(Drive_Power);
