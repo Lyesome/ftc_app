@@ -5,14 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 /**
  * Created by Lyesome on 2018-01-03.
  */
-@Autonomous(name="Indiana Gary - Glyph Lifter", group="Linear Opmode")
+@Autonomous(name="Indiana Gary - Jewel Arm", group="Linear Opmode")
 //@Disabled
 
-public class Autonomous_GlyphLifter extends LinearOpMode {
+public class Autonomous_JewelArm extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motorFL = null;
@@ -24,6 +25,10 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
     private DcMotor motorLift = null;
     private Servo GrabberR = null;
     private Servo GrabberL = null;
+
+    private ColorSensor colorSensorF;    // Hardware Device Object
+    private ColorSensor colorSensorB;
+    private Servo JewelArm = null;
 
     @Override
     public void runOpMode() {
@@ -43,6 +48,10 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_colorF");
+        colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_colorB");
+        JewelArm = hardwareMap.servo.get("JewelArm");
+
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
         motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -57,6 +66,10 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        String Team_Color = "red";
+        Double JewelOffset;
+        Double ColumnOffset;
+
 
         waitForStart();
         runtime.reset();
@@ -67,9 +80,9 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
         telemetry.update();
 
         //Autonomous Commands
-        GlyphCapture();
-        GlyphRelease();
-
+        //GlyphCapture();
+        //GlyphRelease();
+        JewelOffset = JewelKnock(Team_Color);
     }
 
 
@@ -183,6 +196,52 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
     private void GlyphRelease(){
         GrabberL.setPosition(0.8);
         GrabberR.setPosition(0.2);
+    }
+
+    private double JewelKnock(String myColor){
+        //Knock off other team's jewel by driving foward or backwards based on color sensor
+        //Return distance travelled in inches
+        double Move_Distance = 0;
+        //Lower jewel arm
+        JewelArm.setPosition(0.2);
+        //Turn on LEDs
+        colorSensorF.enableLed(true);
+        colorSensorB.enableLed(true);
+        //Give time for jewel arm to move and color sensor to read values
+        sleep(1000);
+        //Knock off the jewel
+        if (ColorRedTestFront() == 0) {
+            Move_Distance = 0;
+        }
+        if (ColorRedTestFront() == 1) {
+            Move_Distance = -2;
+        }
+        if (ColorRedTestFront() == 2) {
+            Move_Distance = 2;
+        }
+        DriveForward(Drive_Power, Move_Distance);
+
+        //Raise jewel arm
+        JewelArm.setPosition(0);
+        //Turn off LEDs
+        colorSensorF.enableLed(false);
+        colorSensorB.enableLed(false);
+
+        return Move_Distance;
+    }
+
+    private int ColorRedTestFront() {
+        int result = 0;
+        if (colorSensorF.red() == colorSensorB.red()) {
+            result = 0;
+        }
+        if (colorSensorF.red() > colorSensorB.red()) {
+            result = 1;
+        }
+        if (colorSensorF.red() < colorSensorB.red()) {
+            result = 2;
+        }
+        return result;
     }
 
 }

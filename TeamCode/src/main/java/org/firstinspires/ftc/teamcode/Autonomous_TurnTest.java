@@ -96,6 +96,7 @@ public class Autonomous_TurnTest extends LinearOpMode {
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
+        sleep(500);
     }
 
 
