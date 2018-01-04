@@ -69,7 +69,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
         String Team_Color = "red";
         Double JewelOffset;
         Double ColumnOffset;
-
+        JewelArm.setPosition(0.37);
 
         waitForStart();
         runtime.reset();
@@ -78,6 +78,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
+
 
         //Autonomous Commands
         //GlyphCapture();
@@ -203,7 +204,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
         //Return distance travelled in inches
         double Move_Distance = 0;
         //Lower jewel arm
-        JewelArm.setPosition(0.2);
+        JewelArm.setPosition(0.31);
         //Turn on LEDs
         colorSensorF.enableLed(true);
         colorSensorB.enableLed(true);
@@ -222,7 +223,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
         DriveForward(Drive_Power, Move_Distance);
 
         //Raise jewel arm
-        JewelArm.setPosition(0);
+        JewelArm.setPosition(0.37);
         //Turn off LEDs
         colorSensorF.enableLed(false);
         colorSensorB.enableLed(false);
