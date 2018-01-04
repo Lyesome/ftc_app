@@ -197,10 +197,10 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.addData("End Angle: ", initialAngle + Angle);
             telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
-            motorFL.setPower(1.0);
-            motorFR.setPower(-1.0);
-            motorBL.setPower(1.0);
-            motorBR.setPower(-1.0);
+            motorFL.setPower(Drive_Power);
+            motorFR.setPower(-Drive_Power);
+            motorBL.setPower(Drive_Power);
+            motorBR.setPower(-Drive_Power);
         }
         StopWheels();
     }
@@ -212,10 +212,10 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.addData("End Angle: ", initialAngle - Angle);
             telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
             telemetry.update();
-            motorFL.setPower(-1.0);
-            motorFR.setPower(1.0);
-            motorBL.setPower(-1.0);
-            motorBR.setPower(1.0);
+            motorFL.setPower(-Drive_Power);
+            motorFR.setPower(Drive_Power);
+            motorBL.setPower(-Drive_Power);
+            motorBR.setPower(Drive_Power);
         }
         StopWheels();
     }
