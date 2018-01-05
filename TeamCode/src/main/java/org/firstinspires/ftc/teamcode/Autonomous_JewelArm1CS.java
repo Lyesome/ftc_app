@@ -216,9 +216,9 @@ public class Autonomous_JewelArm1CS extends LinearOpMode {
         sleep(1000);
         //Knock off the jewel
         if (colorSensorF.red() > 0) {
-            DriveForward(Drive_Power*.5, 2);
+            DriveBackward(Drive_Power*.5, 2);
         } else {
-            DriveForward(Drive_Power*.5, -2);
+            DriveForward(Drive_Power*.5, 2);
         }
 
         //Raise jewel arm
