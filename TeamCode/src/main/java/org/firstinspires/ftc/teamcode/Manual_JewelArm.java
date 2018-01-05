@@ -1,37 +1,35 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
 /**
- * Created by maris on 2018-01-03.
+ * Created by Lyesome on 2018-01-03.
  */
-@Autonomous(name="Indiana Gary - Turn Test", group="Linear Opmode")
+@TeleOp(name="Manual Jewel Arm", group="Linear Opmode")
 //@Disabled
 
-public class Autonomous_TurnTest extends LinearOpMode {
+public class Manual_JewelArm extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motorFL = null;
     private DcMotor motorFR = null;
     private DcMotor motorBL = null;
     private DcMotor motorBR = null;
-    private static double Drive_Power = 0.2;
+    private static double Drive_Power = 0.5;
 
-    // The IMU sensor object
-    BNO055IMU imu;
+    private DcMotor motorLift = null;
+    private Servo GrabberR = null;
+    private Servo GrabberL = null;
 
-    // State used for updating telemetry
-    Orientation angles;
-    Acceleration gravity;
-
+    private ColorSensor colorSensorF;    // Hardware Device Object
+    private ColorSensor colorSensorB;
+    private Servo JewelArm = null;
 
     @Override
     public void runOpMode() {
@@ -51,53 +49,63 @@ public class Autonomous_TurnTest extends LinearOpMode {
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_colorF");
+        colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_colorB");
+        JewelArm = hardwareMap.servo.get("JewelArm");
+
+        motorLift  = hardwareMap.dcMotor.get("glyph_lifter");
+        GrabberL = hardwareMap.servo.get("Glyph_Pad_Left");
+        GrabberR = hardwareMap.servo.get("Glyph_Pad_Right");
+        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
         motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         motorFR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         motorBL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         motorBR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorLift.setDirection(DcMotor.Direction.REVERSE);
 
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        colorSensorF.enableLed(false);
+        colorSensorB.enableLed(false);
 
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        String Team_Color = "red";
+        Double JewelOffset;
+        Double ColumnOffset;
+
+        //JewelArm.setPosition(0.37);
 
         waitForStart();
         runtime.reset();
 
         // run until the end of the match
+        while(opModeIsActive()) {
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.update();
 
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.update();
 
-        //Autonomous Commands
-        TurnLeft(90);
-        TurnRight(90);
+            //Autonomous Commands
+            //GlyphCapture();
+            //GlyphRelease();
+            telemetry.addData("Jewel Arm @ ", JewelArm.getPosition());
+            telemetry.update();
+            JewelArm.setPosition(gamepad2.right_trigger);
 
+        }
+
+        //JewelOffset = JewelKnock(Team_Color);
     }
 
 
     private void StopWheels() {
-        //telemetry.addData("Wheels: ", "Stopped");
-        //telemetry.update();
+        telemetry.addData("Wheels: ", "Stopped");
+        telemetry.update();
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
-        sleep(1000);
+        sleep(500);
     }
 
 
@@ -120,6 +128,8 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.update();
         }
         StopWheels();
+        telemetry.addData("Destination ", "Reached");
+        telemetry.update();
     }
 
     private void DriveBackward(double power, double distance) {
@@ -140,6 +150,8 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.update();
         }
         StopWheels();
+        telemetry.addData("Destination ", "Reached");
+        telemetry.update();
     }
 
     private void DriveRight(double power, double distance) {
@@ -160,6 +172,8 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.update();
         }
         StopWheels();
+        telemetry.addData("Destination ", "Reached");
+        telemetry.update();
     }
     private void DriveLeft(double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
@@ -179,39 +193,67 @@ public class Autonomous_TurnTest extends LinearOpMode {
             telemetry.update();
         }
         StopWheels();
+        telemetry.addData("Destination ", "Reached");
+        telemetry.update();
     }
 
-    public void TurnLeft(double Angle){
-
-        double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle > initialAngle - Angle) {
-            telemetry.addData("Turning Left: ", Angle);
-            telemetry.addData("Start Angle: ", initialAngle);
-            telemetry.addData("End Angle: ", initialAngle - Angle);
-            telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
-            telemetry.update();
-            motorFL.setPower(Drive_Power);
-            motorFR.setPower(-Drive_Power);
-            motorBL.setPower(Drive_Power);
-            motorBR.setPower(-Drive_Power);
-        }
-        StopWheels();
+    private void GlyphCapture() {
+        GrabberL.setPosition(1.0);
+        GrabberR.setPosition(0.0);
+        motorLift.setPower(0.2);
+        sleep(1000);
+        motorLift.setPower(0.0);
     }
-    private void TurnRight(double Angle){
-        double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle < initialAngle + Angle) {
-            telemetry.addData("Turning Right: ", Angle);
-            telemetry.addData("Start Angle: ", initialAngle);
-            telemetry.addData("End Angle: ", initialAngle + Angle);
-            telemetry.addData("Current Angle: ", imu.getAngularOrientation().firstAngle);
 
-            telemetry.update();
-            motorFL.setPower(-Drive_Power);
-            motorFR.setPower(Drive_Power);
-            motorBL.setPower(-Drive_Power);
-            motorBR.setPower(Drive_Power);
+    private void GlyphRelease(){
+        GrabberL.setPosition(0.8);
+        GrabberR.setPosition(0.2);
+    }
+
+    private double JewelKnock(String myColor){
+        //Knock off other team's jewel by driving foward or backwards based on color sensor
+        //Return distance travelled in inches
+        double Move_Distance = 0;
+        //Lower jewel arm
+        JewelArm.setPosition(0.31);
+        //Turn on LEDs
+        colorSensorF.enableLed(true);
+        colorSensorB.enableLed(true);
+        //Give time for jewel arm to move and color sensor to read values
+        sleep(1000);
+        //Knock off the jewel
+        if (ColorRedTestFront() == 0) {
+            Move_Distance = 0;
         }
-        StopWheels();
+        if (ColorRedTestFront() == 1) {
+            Move_Distance = -2;
+        }
+        if (ColorRedTestFront() == 2) {
+            Move_Distance = 2;
+        }
+        DriveForward(Drive_Power, Move_Distance);
+
+        //Raise jewel arm
+        JewelArm.setPosition(0.37);
+        //Turn off LEDs
+        colorSensorF.enableLed(false);
+        colorSensorB.enableLed(false);
+
+        return Move_Distance;
+    }
+
+    private int ColorRedTestFront() {
+        int result = 0;
+        if (colorSensorF.red() == colorSensorB.red()) {
+            result = 0;
+        }
+        if (colorSensorF.red() > colorSensorB.red()) {
+            result = 1;
+        }
+        if (colorSensorF.red() < colorSensorB.red()) {
+            result = 2;
+        }
+        return result;
     }
 
 }

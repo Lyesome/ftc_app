@@ -53,6 +53,12 @@ public class Autonomous_JewelArm extends LinearOpMode {
         colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_colorB");
         JewelArm = hardwareMap.servo.get("JewelArm");
 
+        motorLift  = hardwareMap.dcMotor.get("glyph_lifter");
+        GrabberL = hardwareMap.servo.get("Glyph_Pad_Left");
+        GrabberR = hardwareMap.servo.get("Glyph_Pad_Right");
+        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
         motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -61,16 +67,14 @@ public class Autonomous_JewelArm extends LinearOpMode {
         motorBR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         motorLift.setDirection(DcMotor.Direction.REVERSE);
 
-        motorLift  = hardwareMap.dcMotor.get("motor_lift");
-        GrabberL = hardwareMap.servo.get("GrabberL");
-        GrabberR = hardwareMap.servo.get("GrabberR");
-        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        colorSensorF.enableLed(false);
+        colorSensorB.enableLed(false);
 
         String Team_Color = "red";
         Double JewelOffset;
         Double ColumnOffset;
-        JewelArm.setPosition(0.37);
+
+        //JewelArm.setPosition(0.37);
 
         waitForStart();
         runtime.reset();
@@ -84,13 +88,13 @@ public class Autonomous_JewelArm extends LinearOpMode {
         //Autonomous Commands
         //GlyphCapture();
         //GlyphRelease();
+
         JewelOffset = JewelKnock(Team_Color);
+        sleep(5000);
     }
 
 
     private void StopWheels() {
-        telemetry.addData("Wheels: ", "Stopped");
-        telemetry.update();
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);
@@ -104,22 +108,20 @@ public class Autonomous_JewelArm extends LinearOpMode {
         double scaleFactor = 89.17;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition + (distance * scaleFactor));
-        telemetry.addData("Driving Forward: ", Double.toString(distance) + " inches");
-        telemetry.addData("Start Position: ", startPosition);
-        telemetry.addData("End Position: ", endPosition);
-        telemetry.update();
+        //telemetry.addData("Driving Forward: ", Double.toString(distance) + " inches");
+        //telemetry.addData("Start Position: ", startPosition);
+        //telemetry.addData("End Position: ", endPosition);
+        //telemetry.update();
 
         while (motorBL.getCurrentPosition() < endPosition) {
             motorFL.setPower(power);
             motorFR.setPower(power);
             motorBL.setPower(power);
             motorBR.setPower(power);
-            telemetry.addData("Distance Remaining: ", Double.toString(scaleFactor * (endPosition - motorBL.getCurrentPosition())) + " inches");
-            telemetry.update();
+            //telemetry.addData("Distance Remaining: ", Double.toString(scaleFactor * (endPosition - motorBL.getCurrentPosition())) + " inches");
+            //telemetry.update();
         }
         StopWheels();
-        telemetry.addData("Destination ", "Reached");
-        telemetry.update();
     }
 
     private void DriveBackward(double power, double distance) {
@@ -205,7 +207,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
         //Return distance travelled in inches
         double Move_Distance = 0;
         //Lower jewel arm
-        JewelArm.setPosition(0.31);
+        //JewelArm.setPosition(0.31);
         //Turn on LEDs
         colorSensorF.enableLed(true);
         colorSensorB.enableLed(true);
@@ -224,7 +226,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
         DriveForward(Drive_Power, Move_Distance);
 
         //Raise jewel arm
-        JewelArm.setPosition(0.37);
+        //JewelArm.setPosition(0.37);
         //Turn off LEDs
         colorSensorF.enableLed(false);
         colorSensorB.enableLed(false);
@@ -234,6 +236,9 @@ public class Autonomous_JewelArm extends LinearOpMode {
 
     private int ColorRedTestFront() {
         int result = 0;
+        telemetry.addData("Front Red Value", colorSensorF);
+        telemetry.addData("Back Red Value", colorSensorB);
+        telemetry.update();
         if (colorSensorF.red() == colorSensorB.red()) {
             result = 0;
         }

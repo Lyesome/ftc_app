@@ -95,9 +95,9 @@ public class DriverMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         motorBR.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
-        motorLift  = hardwareMap.dcMotor.get("motor_lift");
-        GrabberL = hardwareMap.servo.get("GrabberL");
-        GrabberR = hardwareMap.servo.get("GrabberR");
+        motorLift  = hardwareMap.dcMotor.get("glyph_lifter");
+        GrabberL = hardwareMap.servo.get("Glyph_Pad_Left");
+        GrabberR = hardwareMap.servo.get("Glyph_Pad_Right");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LifterPower = 0.2;
@@ -105,9 +105,9 @@ public class DriverMode extends LinearOpMode {
         //Set preset positions for Glyph Lifter
         PositionStart = motorLift.getCurrentPosition();
         PositionMax = PositionStart + 1680;
-        Position1 = PositionStart + 200;
-        Position2 = PositionStart + 600;
-        Position3 = PositionStart + 1200;
+        Position1 = PositionStart + 100;
+        Position2 = PositionStart + 800;
+        Position3 = PositionStart + 1300;
         bAuto = false; //Used to enable auto motion of Glyph Lifter to preset Positions
         GotoPosition = PositionStart;
 
@@ -120,10 +120,13 @@ public class DriverMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        GrabberL.setPosition(0.5);
+        GrabberR.setPosition(0.5);
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry.update();
 
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             //leftMotor.setPower(-gamepad1.left_stick_y);
@@ -144,17 +147,17 @@ public class DriverMode extends LinearOpMode {
 
             //Glyph Grabber Control
             if (gamepad2.right_trigger > 0) {
-                GrabberL.setPosition(gamepad2.right_trigger * 0.2 + 0.8);
-                GrabberR.setPosition(1 - (gamepad2.right_trigger * 0.2 + 0.8));
+                GrabberR.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
+                GrabberL.setPosition(1 - (gamepad2.right_trigger * 0.2 + 0.5));
             }
 
             //Glyph Lifter Control
-            if ((gamepad2.left_stick_y > 0) || (gamepad2.left_stick_y < 0)) {
-                if ((gamepad2.left_stick_y < 0) && (motorLift.getCurrentPosition() <= PositionMax)) {
-                    motorLift.setPower(-gamepad2.left_stick_y*LifterPower*1.1);
+            if ((gamepad2.right_stick_y > 0) || (gamepad2.right_stick_y < 0)) {
+                if ((gamepad2.right_stick_y < 0) && (motorLift.getCurrentPosition() <= PositionMax)) {
+                    motorLift.setPower(-gamepad2.right_stick_y*LifterPower*1.1);
                 }else {
-                    if ((gamepad2.left_stick_y > 0) && (motorLift.getCurrentPosition() >= PositionStart)) {
-                        motorLift.setPower(-gamepad2.left_stick_y*LifterPower*0.9);
+                    if ((gamepad2.right_stick_y > 0) && (motorLift.getCurrentPosition() >= PositionStart)) {
+                        motorLift.setPower(-gamepad2.right_stick_y*LifterPower*0.9);
                     } else {
                         motorLift.setPower(0);
                     }

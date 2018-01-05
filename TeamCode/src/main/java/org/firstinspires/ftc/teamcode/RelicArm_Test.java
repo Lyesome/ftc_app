@@ -60,9 +60,9 @@ public class RelicArm_Test extends LinearOpMode {
     public DcMotor motorBR = null;
 
     public DcMotor motorRelicArm = null;
-    public Servo RelicGrab = null;
-    public Servo RelicLift = null;
-    public Servo RelicArmLock = null;
+    //public Servo RelicGrab = null;
+    //public Servo RelicLift = null;
+   // public Servo RelicArmLock = null;
     public double RelicArmPower;
 
 
@@ -112,18 +112,18 @@ public class RelicArm_Test extends LinearOpMode {
 
             //RelicArmLock.setPosition();
             //Activate "RelicGrab" when a button is pressed
-            if (gamepad2.dpad_down) {
-                RelicGrab.setPosition(0.5);
-            } else {
-                RelicGrab.setPosition(0.25);
-            }
+           // if (gamepad2.right_bumper) {
+               // RelicGrab.setPosition(0.5);
+          //  } else {
+            //    RelicGrab.setPosition(0.25);
+            //}
             //Lift Relic when another button is pushed
-            if (gamepad2.left_bumper) {
-                RelicLift.setPosition(0.50);
-            }
-            else {
-                RelicLift.setPosition(0.5);
-            }
+            //if (gamepad2.left_bumper) {
+              //  RelicLift.setPosition(0.50);
+            //}
+            //else {
+              //  RelicLift.setPosition(0.5);
+            //}
         }
             //Drop Off Relic
 

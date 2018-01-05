@@ -44,6 +44,12 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        motorLift  = hardwareMap.dcMotor.get("glyph_lifter");
+        GrabberL = hardwareMap.servo.get("Glyph_Pad_Left");
+        GrabberR = hardwareMap.servo.get("Glyph_Pad_Right");
+        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
         motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -51,13 +57,6 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         motorBR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         motorLift.setDirection(DcMotor.Direction.REVERSE);
-
-        motorLift  = hardwareMap.dcMotor.get("motor_lift");
-        GrabberL = hardwareMap.servo.get("GrabberL");
-        GrabberR = hardwareMap.servo.get("GrabberR");
-        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
         waitForStart();
         runtime.reset();
@@ -174,16 +173,16 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
     }
 
     private void GlyphCapture() {
-        GrabberL.setPosition(1.0);
-        GrabberR.setPosition(0.0);
+        GrabberL.setPosition(0.1);
+        GrabberR.setPosition(0.9);
         motorLift.setPower(0.2);
         sleep(1000);
         motorLift.setPower(0.0);
     }
 
     private void GlyphRelease(){
-        GrabberL.setPosition(0.8);
-        GrabberR.setPosition(0.2);
+        GrabberL.setPosition(0.5);
+        GrabberR.setPosition(0.5);
     }
 
 }
