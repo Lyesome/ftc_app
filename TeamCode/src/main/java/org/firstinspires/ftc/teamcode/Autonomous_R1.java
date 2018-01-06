@@ -118,8 +118,8 @@ public class Autonomous_R1 extends LinearOpMode {
         ColumnOffset = DecodeImage();
         GlyphCapture();
         JewelOffset = JewelKnock(Team_Color);
-        DriveBackward(Drive_Power, 36 + JewelOffset + ColumnOffset);
-        TurnLeft(90);
+        DriveForward(Drive_Power, 36 + JewelOffset + ColumnOffset);
+        TurnRight(90);
         DriveForward(Drive_Power, 12);
         GlyphRelease();
         DriveBackward(Drive_Power, 2);
@@ -213,7 +213,7 @@ public class Autonomous_R1 extends LinearOpMode {
         }
         StopWheels();
     }
-    public void TurnRight(double Angle){
+    public void TurnLeft(double Angle){
 
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while (imu.getAngularOrientation().firstAngle < (initialAngle + Angle)) {
@@ -230,7 +230,7 @@ public class Autonomous_R1 extends LinearOpMode {
         StopWheels();
     }
 
-    private void TurnLeft(double Angle){
+    private void TurnRight(double Angle){
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while (imu.getAngularOrientation().firstAngle > (initialAngle - Angle)) {
             telemetry.addData("Turning Left: ", Angle);
@@ -247,8 +247,8 @@ public class Autonomous_R1 extends LinearOpMode {
     }
 
     private void GlyphCapture() {
-        GrabberL.setPosition(0.1);
-        GrabberR.setPosition(0.9);
+        GrabberL.setPosition(0.2);
+        GrabberR.setPosition(0.8);
         motorLift.setPower(0.2);
         sleep(1000);
         motorLift.setPower(0.0);
