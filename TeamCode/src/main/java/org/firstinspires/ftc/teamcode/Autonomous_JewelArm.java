@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -52,6 +53,8 @@ public class Autonomous_JewelArm extends LinearOpMode {
         colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_colorF");
         colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_colorB");
         JewelArm = hardwareMap.servo.get("JewelArm");
+
+        colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a) );
 
         motorLift  = hardwareMap.dcMotor.get("glyph_lifter");
         GrabberL = hardwareMap.servo.get("Glyph_Pad_Left");
@@ -185,8 +188,8 @@ public class Autonomous_JewelArm extends LinearOpMode {
             telemetry.update();
         }
         StopWheels();
-        telemetry.addData("Destination ", "Reached");
-        telemetry.update();
+        //telemetry.addData("Destination ", "Reached");
+        //telemetry.update();
     }
 
     private void GlyphCapture() {
@@ -219,11 +222,13 @@ public class Autonomous_JewelArm extends LinearOpMode {
         }
         if (ColorRedTestFront() == 1) {
             Move_Distance = -2;
+            DriveBackward(Drive_Power, -Move_Distance);
         }
         if (ColorRedTestFront() == 2) {
             Move_Distance = 2;
+            DriveForward(Drive_Power, Move_Distance);
         }
-        DriveForward(Drive_Power, Move_Distance);
+
 
         //Raise jewel arm
         //JewelArm.setPosition(0.37);
@@ -236,19 +241,57 @@ public class Autonomous_JewelArm extends LinearOpMode {
 
     private int ColorRedTestFront() {
         int result = 0;
-        telemetry.addData("Front Red Value", colorSensorF);
-        telemetry.addData("Back Red Value", colorSensorB);
-        telemetry.update();
-        if (colorSensorF.red() == colorSensorB.red()) {
-            result = 0;
-        }
-        if (colorSensorF.red() > colorSensorB.red()) {
+        telemetry.addData("Clear(F/B)", Integer.toString(colorSensorF.alpha()) + "/" + Integer.toString(colorSensorB.alpha()));
+        telemetry.addData("Red(F/B)  ", Integer.toString(colorSensorF.red()) + "/" + Integer.toString(colorSensorB.red()));
+        telemetry.addData("Green(F/B)", Integer.toString(colorSensorF.green()) + "/" + Integer.toString(colorSensorB.green()));
+        telemetry.addData("Blue(F/B) ", Integer.toString(colorSensorF.blue()) + "/" + Integer.toString(colorSensorB.blue()));
+        if (colorSensorF.red() > 4) {
+            telemetry.addData("Move Back", "");
             result = 1;
-        }
-        if (colorSensorF.red() < colorSensorB.red()) {
-            result = 2;
-        }
-        return result;
-    }
+        } else {
+            if (colorSensorB.red() > 4) {
+                telemetry.addData("Move Forward", "");
+                result = 2;
+            } else {
+                if (colorSensorF.blue() > 4) {
+                    telemetry.addData("Move Forward", "");
+                    result = 2;
+                } else {
+                    if (colorSensorB.blue() > 4) {
+                        telemetry.addData("Move Backward", "");
+                        result = 1;
+                    } else {
+                        if (colorSensorF.red() > 0) {
+                            telemetry.addData("Move Back", "");
+                            result = 1;
+                        } else {
+                            if (colorSensorB.red() > 0) {
+                                telemetry.addData("Move Forward", "");
+                                result = 2;
+                            } else {
+                                if (colorSensorF.blue() > 0) {
+                                    telemetry.addData("Move Forward", "");
+                                    result = 2;
+                                } else {
+                                    if (colorSensorB.blue() > 0) {
+                                        telemetry.addData("Move Backward", "");
+                                        result = 1;
+                                    } else {
+                                        telemetry.addData("Don't Move", "");
+                                        result = 0;
+                                    }
+                                }
+                            }
+                        }
 
+                    }
+                }
+
+            }
+
+        }
+        telemetry.update();
+        return result;
+
+    }
 }

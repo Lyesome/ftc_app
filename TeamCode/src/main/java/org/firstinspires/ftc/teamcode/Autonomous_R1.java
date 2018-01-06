@@ -154,12 +154,8 @@ public class Autonomous_R1 extends LinearOpMode {
             motorFR.setPower(power);
             motorBL.setPower(power);
             motorBR.setPower(power);
-            telemetry.addData("Distance Remaining: ", Double.toString(scaleFactor * (endPosition - motorBL.getCurrentPosition())) + " inches");
-            telemetry.update();
         }
         StopWheels();
-        telemetry.addData("Destination ", "Reached");
-        telemetry.update();
     }
 
     private void DriveBackward(double power, double distance) {
@@ -176,12 +172,8 @@ public class Autonomous_R1 extends LinearOpMode {
             motorFR.setPower(-power);
             motorBL.setPower(-power);
             motorBR.setPower(-power);
-            telemetry.addData("Distance Remaining: ", Double.toString(scaleFactor * (motorBL.getCurrentPosition() - endPosition)) + " inches");
-            telemetry.update();
         }
         StopWheels();
-        telemetry.addData("Destination ", "Reached");
-        telemetry.update();
     }
 
     private void DriveRight(double power, double distance) {
@@ -198,12 +190,8 @@ public class Autonomous_R1 extends LinearOpMode {
             motorFR.setPower(-power);
             motorBL.setPower(-power);
             motorBR.setPower(power);
-            telemetry.addData("Distance Remaining: ", Double.toString(scaleFactor * (motorBL.getCurrentPosition() - endPosition)) + " inches");
-            telemetry.update();
         }
         StopWheels();
-        telemetry.addData("Destination ", "Reached");
-        telemetry.update();
     }
     private void DriveLeft(double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
