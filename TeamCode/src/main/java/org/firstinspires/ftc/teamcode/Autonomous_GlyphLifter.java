@@ -68,6 +68,7 @@ public class Autonomous_GlyphLifter extends LinearOpMode {
 
         //Autonomous Commands
         GlyphCapture();
+        sleep(5000);
         GlyphRelease();
 
     }

@@ -106,8 +106,8 @@ public class DriverMode extends LinearOpMode {
         PositionStart = motorLift.getCurrentPosition();
         PositionMax = PositionStart + 1680;
         Position1 = PositionStart + 100;
-        Position2 = PositionStart + 800;
-        Position3 = PositionStart + 1300;
+        Position2 = PositionStart + 750;
+        Position3 = PositionStart + 1350;
         bAuto = false; //Used to enable auto motion of Glyph Lifter to preset Positions
         GotoPosition = PositionStart;
 
@@ -196,7 +196,7 @@ public class DriverMode extends LinearOpMode {
                     }else{
                         //Turn off auto motion once at position
                         bAuto = false;
-                        motorLift.setPower(0);
+                        motorLift.setPower(0.005);
                     }
                 }
 

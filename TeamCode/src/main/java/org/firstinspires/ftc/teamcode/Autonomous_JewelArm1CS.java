@@ -211,7 +211,10 @@ public class Autonomous_JewelArm1CS extends LinearOpMode {
         colorSensorF.enableLed(true);
         //colorSensorB.enableLed(true);
         //Give time for jewel arm to move and color sensor to read values
-        telemetry.addData("Red Value", colorSensorF.red());
+        telemetry.addData("Clear", colorSensorF.alpha());
+        telemetry.addData("Red  ", colorSensorF.red());
+        telemetry.addData("Green", colorSensorF.green());
+        telemetry.addData("Blue ", colorSensorF.blue());
         telemetry.update();
         sleep(1000);
         //Knock off the jewel
