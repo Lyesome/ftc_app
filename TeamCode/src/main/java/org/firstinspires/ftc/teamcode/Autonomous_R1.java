@@ -12,6 +12,20 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by Lyesome on 2018-01-03.
@@ -43,6 +57,17 @@ public class Autonomous_R1 extends LinearOpMode {
     // State used for updating telemetry
     Orientation angles;
     Acceleration gravity;
+
+    public static final String TAG = "Vuforia VuMark Sample";
+
+    OpenGLMatrix lastLocation = null;
+    VuforiaLocalizer vuforia;
+
+    int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+    VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+    VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+    VuforiaTrackable relicTemplate = relicTrackables.get(0);
 
     @Override
     public void runOpMode() {
@@ -100,12 +125,22 @@ public class Autonomous_R1 extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        vuparameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
+
+        vuparameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(vuparameters);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+
+
         String Team_Color = "red";
         Double JewelOffset;
         Double ColumnOffset;
         JewelArm.setPosition(0.37);
 
         waitForStart();
+
+        relicTrackables.activate();
+
         runtime.reset();
 
         // run until the end of the match
@@ -123,14 +158,38 @@ public class Autonomous_R1 extends LinearOpMode {
         DriveForward(Drive_Power, 12);
         GlyphRelease();
         DriveBackward(Drive_Power, 2);
-
-
     }
 
     private double DecodeImage(){
         //Decode Image and offset final robot position to line up with correct column
         //Return offset distance in inches
-        return 0;
+        int vuMarkColumnOffset = 0;
+        int columnRightOffset = -4;
+        int columnLeftOffset = 4;
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+
+                /* Found an instance of the template. In the actual game, you will probably
+                 * loop until this condition occurs, then move on to act accordingly depending
+                 * on which VuMark was visible. */
+            telemetry.addData("VuMark", "%s visible", vuMark);
+            if (vuMark == RelicRecoveryVuMark.LEFT) {
+                vuMarkColumnOffset = columnLeftOffset;
+            }
+            if (vuMark == RelicRecoveryVuMark.RIGHT) {
+                vuMarkColumnOffset = columnRightOffset;
+            }
+        }
+        else {
+            telemetry.addData("VuMark", "not visible");
+        }
+
+        telemetry.update();
+        return vuMarkColumnOffset;
+    }
+
+    String format(OpenGLMatrix transformationMatrix) {
+        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 
     private void StopWheels() {
