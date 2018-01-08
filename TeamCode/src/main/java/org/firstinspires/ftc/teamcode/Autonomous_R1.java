@@ -163,9 +163,9 @@ public class Autonomous_R1 extends LinearOpMode {
     private double DecodeImage(){
         //Decode Image and offset final robot position to line up with correct column
         //Return offset distance in inches
-        int vuMarkColumnOffset = 0;
-        int columnRightOffset = -4;
-        int columnLeftOffset = 4;
+        double vuMarkColumnOffset = 0;
+        double columnRightOffset = -4; //Offset in inches from center column; negative is closer to bot's starting position
+        double columnLeftOffset = 4; //Offset in inches from center column; negative is closer to bot's starting position
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
