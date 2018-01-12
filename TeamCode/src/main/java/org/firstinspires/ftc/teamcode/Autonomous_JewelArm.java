@@ -210,7 +210,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
         //Return distance travelled in inches
         double Move_Distance = 0;
         //Lower jewel arm
-        //JewelArm.setPosition(0.31);
+        JewelArm.setPosition(0.17);
         //Turn on LEDs
         colorSensorF.enableLed(true);
         colorSensorB.enableLed(true);
@@ -231,7 +231,7 @@ public class Autonomous_JewelArm extends LinearOpMode {
 
 
         //Raise jewel arm
-        //JewelArm.setPosition(0.37);
+        JewelArm.setPosition(0.75);
         //Turn off LEDs
         colorSensorF.enableLed(false);
         colorSensorB.enableLed(false);

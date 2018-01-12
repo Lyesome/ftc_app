@@ -30,6 +30,7 @@ public class Manual_JewelArm extends LinearOpMode {
     private ColorSensor colorSensorF;    // Hardware Device Object
     private ColorSensor colorSensorB;
     private Servo JewelArm = null;
+    private Servo RelicLift = null;
 
     @Override
     public void runOpMode() {
@@ -52,6 +53,7 @@ public class Manual_JewelArm extends LinearOpMode {
         colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_colorF");
         colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_colorB");
         JewelArm = hardwareMap.servo.get("JewelArm");
+        RelicLift = hardwareMap.servo.get("RelicLift");
 
         motorLift  = hardwareMap.dcMotor.get("glyph_lifter");
         GrabberL = hardwareMap.servo.get("Glyph_Pad_Left");
@@ -74,23 +76,28 @@ public class Manual_JewelArm extends LinearOpMode {
         Double JewelOffset;
         Double ColumnOffset;
 
-        //JewelArm.setPosition(0.37);
+        JewelArm.setPosition(0.7);
+        RelicLift.setPosition(0.3);
+        GrabberL.setPosition(0.5);
+        GrabberR.setPosition(0.5);
 
         waitForStart();
         runtime.reset();
 
         // run until the end of the match
         while(opModeIsActive()) {
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry.update();
 
 
             //Autonomous Commands
             //GlyphCapture();
             //GlyphRelease();
             telemetry.addData("Jewel Arm @ ", JewelArm.getPosition());
+            telemetry.addData("Relic Lift @", RelicLift.getPosition());
             telemetry.update();
-            JewelArm.setPosition(gamepad2.right_trigger);
+            JewelArm.setPosition(1-gamepad2.right_trigger);
+            RelicLift.setPosition(gamepad2.left_trigger);
 
         }
 
