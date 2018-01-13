@@ -48,7 +48,7 @@ public class Autonomous_R1 extends LinearOpMode {
 
         indianaGary.drive.init(hardwareMap);
         indianaGary.myJewelArm.init(hardwareMap);
-
+        indianaGary.myGlyphLifter.init(hardwareMap);
 
         //vuparameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
 
@@ -72,7 +72,7 @@ public class Autonomous_R1 extends LinearOpMode {
 
 
         //Autonomous Commands
-        //indianaGary.myGlyphLift.Capture();
+        indianaGary.myGlyphLifter.Capture();
         indianaGary.myJewelArm.LowerArm();
         jeweloffest = indianaGary.myJewelArm.JewelKnock("blue");
         if (jeweloffest < 0){
@@ -89,7 +89,7 @@ public class Autonomous_R1 extends LinearOpMode {
 
         indianaGary.drive.Forward(Drive_Power, 12);
 
-        //indianaGary.myGlyphLift.Release();
+        indianaGary.myGlyphLifter.Release();
         indianaGary.drive.Backward(Drive_Power, 2);
     }
 

@@ -9,6 +9,8 @@ public class BotConfig {
     MecanumDrive drive = new MecanumDrive();
     JewelArm myJewelArm = new JewelArm();
 
+    GlyphLifter myGlyphLifter = new GlyphLifter();
+
     public BotConfig() { // constructor
 
     }
