@@ -27,7 +27,7 @@ public class JewelArm {
         colorSensorF = myHWMap.get(ColorSensor.class, "sensor_color_f");
         colorSensorB = myHWMap.get(ColorSensor.class, "sensor_color_b");
         colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a));
-        armServo = myHWMap.servo.get("JewelArm");
+        armServo = myHWMap.servo.get("servo_jewel_arm");
 
         colorSensorF.enableLed(false);
         colorSensorB.enableLed(false);

@@ -3,29 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  * Created by Lyesome on 2018-01-03.
@@ -40,19 +27,19 @@ public class Autonomous_R1 extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jeweloffest = 0;
     private double columnOffset = 0;
-    private  double Drive_Power = 0.5;
+    private static double Drive_Power = 0.5;
 
 
-    public static final String TAG = "Vuforia VuMark Sample";
+    //public static final String TAG = "Vuforia VuMark Sample";
 
-    OpenGLMatrix lastLocation = null;
-    VuforiaLocalizer vuforia;
+    //OpenGLMatrix lastLocation = null;
+    //VuforiaLocalizer vuforia;
 
-    int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-    VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+    //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+    //VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
-    VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-    VuforiaTrackable relicTemplate = relicTrackables.get(0);
+    //VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+    //VuforiaTrackable relicTemplate = relicTrackables.get(0);
 
     @Override
     public void runOpMode() {
@@ -63,18 +50,18 @@ public class Autonomous_R1 extends LinearOpMode {
         indianaGary.myJewelArm.init(hardwareMap);
 
 
-        vuparameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
+        //vuparameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
 
-        vuparameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(vuparameters);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+        //vuparameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        //this.vuforia = ClassFactory.createVuforiaLocalizer(vuparameters);
+        //relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
 
         String Team_Color = "red";
 
         waitForStart();
 
-        relicTrackables.activate();
+        //relicTrackables.activate();
 
         runtime.reset();
 
@@ -106,37 +93,37 @@ public class Autonomous_R1 extends LinearOpMode {
         indianaGary.drive.Backward(Drive_Power, 2);
     }
 
-    private double DecodeImage(){
+    //private double DecodeImage(){
         //Decode Image and offset final robot position to line up with correct column
         //Return offset distance in inches
-        double vuMarkColumnOffset = 0;
-        double columnRightOffset = -4; //Offset in inches from center column; negative is closer to bot's starting position
-        double columnLeftOffset = 4; //Offset in inches from center column; negative is closer to bot's starting position
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-        if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+        //double vuMarkColumnOffset = 0;
+        //double columnRightOffset = -4; //Offset in inches from center column; negative is closer to bot's starting position
+        //double columnLeftOffset = 4; //Offset in inches from center column; negative is closer to bot's starting position
+        //RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        //if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
                 /* Found an instance of the template. In the actual game, you will probably
                  * loop until this condition occurs, then move on to act accordingly depending
                  * on which VuMark was visible. */
-            telemetry.addData("VuMark", "%s visible", vuMark);
-            if (vuMark == RelicRecoveryVuMark.LEFT) {
-                vuMarkColumnOffset = columnLeftOffset;
-            }
-            if (vuMark == RelicRecoveryVuMark.RIGHT) {
-                vuMarkColumnOffset = columnRightOffset;
-            }
-        }
-        else {
-            telemetry.addData("VuMark", "not visible");
-        }
+        //    telemetry.addData("VuMark", "%s visible", vuMark);
+        //    if (vuMark == RelicRecoveryVuMark.LEFT) {
+        //        vuMarkColumnOffset = columnLeftOffset;
+        //    }
+        //    if (vuMark == RelicRecoveryVuMark.RIGHT) {
+        //        vuMarkColumnOffset = columnRightOffset;
+        //    }
+        //}
+        //else {
+        //    telemetry.addData("VuMark", "not visible");
+        //}
 
-        telemetry.update();
-        return vuMarkColumnOffset;
-    }
+        //telemetry.update();
+        //return vuMarkColumnOffset;
+    //}
 
-    String format(OpenGLMatrix transformationMatrix) {
-        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
-    }
+    //String format(OpenGLMatrix transformationMatrix) {
+    //    return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+    //}
 
 
 }

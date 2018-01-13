@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,12 +37,18 @@ public class MecanumDrive {
         motorBL  = myHWMap.dcMotor.get("motor_bl");
         motorBR  = myHWMap.dcMotor.get("motor_br");
 
+
+
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
-        motorFL.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorFR.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        motorBL.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorBR.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorFR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorBL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorBR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -132,10 +139,10 @@ public class MecanumDrive {
 
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while (imu.getAngularOrientation().firstAngle < (initialAngle + Angle)) {
-            motorFL.setPower(-Drive_Power);
-            motorFR.setPower(Drive_Power);
-            motorBL.setPower(-Drive_Power);
-            motorBR.setPower(Drive_Power);
+            motorFL.setPower(-Turn_Power);
+            motorFR.setPower(Turn_Power);
+            motorBL.setPower(-Turn_Power);
+            motorBR.setPower(Turn_Power);
         }
         StopWheels();
     }
@@ -143,10 +150,10 @@ public class MecanumDrive {
     public void TurnRight(double Angle){
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while (imu.getAngularOrientation().firstAngle > (initialAngle - Angle)) {
-            motorFL.setPower(Drive_Power);
-            motorFR.setPower(-Drive_Power);
-            motorBL.setPower(Drive_Power);
-            motorBR.setPower(-Drive_Power);
+            motorFL.setPower(Turn_Power);
+            motorFR.setPower(-Turn_Power);
+            motorBL.setPower(Turn_Power);
+            motorBR.setPower(-Turn_Power);
         }
         StopWheels();
     }
