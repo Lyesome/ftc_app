@@ -31,7 +31,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -61,8 +63,18 @@ public class DriverMode extends LinearOpMode {
     public DcMotor motorBR = null;
 
     public DcMotor motorLift = null;
-    public Servo GrabberR = null;
-    public Servo GrabberL = null;
+    public Servo grabberR = null;
+    public Servo grabberL = null;
+
+    public DcMotor relicArm = null;
+    public Servo relicLift = null;
+    public Servo relicLock = null;
+    public Servo relicCapture = null;
+
+    public Servo jewelArm = null;
+    private ColorSensor colorSensorF;    // Hardware Device Object
+    private ColorSensor colorSensorB;
+
 
     long PositionStart;
     long PositionMax;
@@ -95,12 +107,25 @@ public class DriverMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         motorBR.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
-        motorLift  = hardwareMap.dcMotor.get("glyph_lifter");
-        GrabberL = hardwareMap.servo.get("Glyph_Pad_Left");
-        GrabberR = hardwareMap.servo.get("Glyph_Pad_Right");
+        motorLift  = hardwareMap.dcMotor.get("motor_glyph_lifter");
+        grabberL = hardwareMap.servo.get("servo_glyph_left");
+        grabberR = hardwareMap.servo.get("servo_glyph_right");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LifterPower = 0.2;
+
+        relicArm = hardwareMap.dcMotor.get("motor_relic_arm");
+        relicLift = hardwareMap.servo.get("servo_relic_lift");
+        relicLock = hardwareMap.servo.get("servo_relic_lock");
+        relicCapture = hardwareMap.servo.get("servo_relic_capture");
+
+        jewelArm = hardwareMap.servo.get("servo_jewel_arm");
+        colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_color_f");
+        colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_color_b");
+        colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a));
+        colorSensorF.enableLed(false);
+        colorSensorB.enableLed(false);
+
 
         //Set preset positions for Glyph Lifter
         PositionStart = motorLift.getCurrentPosition();
@@ -116,12 +141,28 @@ public class DriverMode extends LinearOpMode {
         motorLift.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         //motorLift.
 
+        double GRABBER_START = 0.5;
+        grabberL.setPosition(GRABBER_START);
+        grabberR.setPosition(GRABBER_START);
+
+        double UNLOCK = 0.0;
+        double LOCK = 0.25;
+        double RELIC_LIFT_DOWN = 0.42;
+        double RELIC_LIFT_UP = 0;
+        double RELIC_CAPTURE_OPEN = 0.71;
+        double RELIC_CAPTURE_CLOSE = 0.5;
+        relicLift.setPosition(RELIC_LIFT_DOWN);
+        relicLock.setPosition(UNLOCK);
+        relicCapture.setPosition(RELIC_CAPTURE_OPEN);
+
+        double JEWEL_ARM_UP = 0.75;
+        double JEWEL_ARM_DOWN = 0.17;
+        jewelArm.setPosition(JEWEL_ARM_UP);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        GrabberL.setPosition(0.5);
-        GrabberR.setPosition(0.5);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -147,8 +188,8 @@ public class DriverMode extends LinearOpMode {
 
             //Glyph Grabber Control
             if (gamepad2.right_trigger > 0) {
-                GrabberR.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
-                GrabberL.setPosition(1 - (gamepad2.right_trigger * 0.2 + 0.5));
+                grabberR.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
+                grabberL.setPosition(1 - (gamepad2.right_trigger * 0.2 + 0.5));
             }
 
             //Glyph Lifter Control
@@ -196,7 +237,7 @@ public class DriverMode extends LinearOpMode {
                     }else{
                         //Turn off auto motion once at position
                         bAuto = false;
-                        motorLift.setPower(0.005);
+                        //motorLift.setPower(0.005); //Add if we need to hold lifter up
                     }
                 }
 
