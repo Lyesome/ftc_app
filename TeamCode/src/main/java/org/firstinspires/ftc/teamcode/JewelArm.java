@@ -16,7 +16,7 @@ public class JewelArm {
     HardwareMap myHWMap;
     final double KNOCK_DISTANCE = 2;
     final double UP_POSITION = 0.75;
-    final double DOWN_POSITION = 0.17;
+    final double DOWN_POSITION = 0.12;
 
     public void JewelArm(){
 

@@ -28,6 +28,7 @@ public class GlyphLifter {
         GrabberR = myHWMap.servo.get("servo_glyph_right");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLift.setDirection(DcMotor.Direction.REVERSE);
         GrabberL.setPosition(0.5);
         GrabberR.setPosition(0.5);
     }
@@ -37,7 +38,7 @@ public class GlyphLifter {
         GrabberR.setPosition(0.8);
         motorLift.setPower(0.2);
         try {
-            Thread.sleep(500);
+            Thread.sleep(2000);
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
         }

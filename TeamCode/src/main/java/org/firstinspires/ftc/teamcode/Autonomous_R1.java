@@ -27,7 +27,7 @@ public class Autonomous_R1 extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jeweloffest = 0;
     private double columnOffset = 0;
-    private static double Drive_Power = 0.5;
+    private static double Drive_Power = 0.2;
 
 
     //public static final String TAG = "Vuforia VuMark Sample";
@@ -83,11 +83,11 @@ public class Autonomous_R1 extends LinearOpMode {
         }
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Forward(Drive_Power, 36 + jeweloffest + columnOffset);
+        indianaGary.drive.Forward(Drive_Power, 27.5 - jeweloffest + columnOffset);
 
         indianaGary.drive.TurnRight(90);
 
-        indianaGary.drive.Forward(Drive_Power, 12);
+        indianaGary.drive.Forward(Drive_Power, 4);
 
         indianaGary.myGlyphLifter.Release();
         indianaGary.drive.Backward(Drive_Power, 2);

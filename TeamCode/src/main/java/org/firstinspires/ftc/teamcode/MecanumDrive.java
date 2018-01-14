@@ -19,7 +19,7 @@ public class MecanumDrive {
     public DcMotor motorBL = null;
     public DcMotor motorBR = null;
     public static double Drive_Power = 0.5;
-    public static double Turn_Power = 0.2;
+    public static double Turn_Power = 0.3;
     // IMU sensor object
     BNO055IMU imu;
 
