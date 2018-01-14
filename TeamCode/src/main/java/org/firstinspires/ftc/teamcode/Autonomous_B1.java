@@ -1,27 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  * Created by Lyesome on 2018-01-03.
  */
 
-@Autonomous(name="Indiana Gary - Red Left", group="Linear Opmode")
+@Autonomous(name="Indiana Gary - Blue Right", group="Linear Opmode")
 //@Disabled
 
-public class Autonomous_R1 extends LinearOpMode {
+public class Autonomous_B1 extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     BotConfig indianaGary = new BotConfig();
@@ -41,7 +31,7 @@ public class Autonomous_R1 extends LinearOpMode {
 
 
 
-        String Team_Color = "red";
+        String Team_Color = "blue";
 
         waitForStart();
 
@@ -57,7 +47,7 @@ public class Autonomous_R1 extends LinearOpMode {
         indianaGary.myGlyphLifter.Capture();
         //columnOffset = indianaGary.myVuMark.DecodeImage();
         indianaGary.myJewelArm.LowerArm();
-        jeweloffest = indianaGary.myJewelArm.JewelKnock("blue");
+        jeweloffest = indianaGary.myJewelArm.JewelKnock("red");
         if (jeweloffest < 0){
             indianaGary.drive.Backward(Drive_Power, -jeweloffest);
         }
@@ -66,7 +56,7 @@ public class Autonomous_R1 extends LinearOpMode {
         }
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Forward(Drive_Power, 27.5 - jeweloffest + columnOffset);
+        indianaGary.drive.Backward(Drive_Power, 27.5 - jeweloffest + columnOffset);
 
         indianaGary.drive.TurnRight(90);
 

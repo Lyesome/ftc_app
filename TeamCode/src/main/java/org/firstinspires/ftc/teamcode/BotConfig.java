@@ -7,7 +7,12 @@ package org.firstinspires.ftc.teamcode;
 public class BotConfig {
     //Add components to robot build
     MecanumDrive drive = new MecanumDrive();
+
     JewelArm myJewelArm = new JewelArm();
+
+    RelicArm myRelicArm = new RelicArm();
+
+    VuMarkDecoder myVuMark = new VuMarkDecoder();
 
     GlyphLifter myGlyphLifter = new GlyphLifter();
 
