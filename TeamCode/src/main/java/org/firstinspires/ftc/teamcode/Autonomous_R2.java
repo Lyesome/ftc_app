@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
 
 public class Autonomous_R2 extends LinearOpMode {
-    // Declare OpMode members.
+    // Declare OpMode members. 
     private ElapsedTime runtime = new ElapsedTime();
     BotConfig indianaGary = new BotConfig();
     private double jeweloffest = 0;
