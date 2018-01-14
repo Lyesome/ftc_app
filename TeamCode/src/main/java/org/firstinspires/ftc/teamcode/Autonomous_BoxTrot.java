@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 /**
  * Created by Lyesome on 2018-01-03.
  */
-@Autonomous(name="Indiana Gary - Box Trot", group="Linear Opmode")
+@Autonomous(name="Indiana Gary - Box Trot", group="Tests")
 //@Disabled
 
 public class Autonomous_BoxTrot extends LinearOpMode {

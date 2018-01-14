@@ -49,6 +49,8 @@ public class MecanumDrive {
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -82,7 +84,7 @@ public class MecanumDrive {
 
     public void Forward(double power, double distance) {
         //Drive forward distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 89.17;
+        double scaleFactor = 84.92;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition + (distance * scaleFactor));
 
@@ -97,7 +99,7 @@ public class MecanumDrive {
 
     public void Backward(double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 89.17;
+        double scaleFactor = 84.92;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
         while (motorBL.getCurrentPosition() > endPosition) {

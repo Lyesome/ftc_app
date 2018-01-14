@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Lyesome on 2018-01-03.
  */
 
-@Autonomous(name="Indiana Gary - Blue Right", group="Linear Opmode")
+@Autonomous(name="Drive Distance Scale Test", group="Tests")
 //@Disabled
 
-public class Autonomous_B1 extends LinearOpMode {
+public class Autonomous_DriveScaleTest extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     BotConfig indianaGary = new BotConfig();
@@ -44,9 +44,9 @@ public class Autonomous_B1 extends LinearOpMode {
 
 
         //Autonomous Commands
-        indianaGary.myGlyphLifter.Capture();
+        //indianaGary.myGlyphLifter.Capture();
         //columnOffset = indianaGary.myVuMark.DecodeImage();
-        indianaGary.myJewelArm.LowerArm();
+        //indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
         if (jewelOffset < 0){
             indianaGary.drive.Backward(Drive_Power, -jewelOffset);
@@ -54,16 +54,12 @@ public class Autonomous_B1 extends LinearOpMode {
         if (jewelOffset > 0){
             indianaGary.drive.Forward(Drive_Power, jewelOffset);
         }
-        indianaGary.myJewelArm.RaiseArm();
+        //indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Backward(Drive_Power, 27.5 - jewelOffset + columnOffset);
+        indianaGary.drive.Forward(Drive_Power, 10 - jewelOffset + columnOffset);
 
-        indianaGary.drive.TurnRight(90);
+        //indianaGary.myGlyphLifter.Release();
 
-        indianaGary.drive.Forward(Drive_Power, 3);
-
-        indianaGary.myGlyphLifter.Release();
-        indianaGary.drive.Backward(Drive_Power, 2);
     }
 
 

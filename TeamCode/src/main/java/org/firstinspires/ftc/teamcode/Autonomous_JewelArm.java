@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 /**
  * Created by Lyesome on 2018-01-03.
  */
-@Autonomous(name="Indiana Gary - Jewel Arm", group="Linear Opmode")
+@Autonomous(name="Indiana Gary - Jewel Arm", group="Tests")
 //@Disabled
 
 public class Autonomous_JewelArm extends LinearOpMode {
@@ -50,8 +50,8 @@ public class Autonomous_JewelArm extends LinearOpMode {
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_colorF");
-        colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_colorB");
+        colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_color_f");
+        colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_color_b");
         JewelArm = hardwareMap.servo.get("JewelArm");
 
         colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a) );

@@ -30,12 +30,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 /**
@@ -51,14 +50,30 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Driver Mode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Old Driver Mode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 //@Disabled
-public class DriverMode extends LinearOpMode {
+public class OldDriverMode extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
+    public DcMotor motorFL = null;
+    public DcMotor motorFR = null;
+    public DcMotor motorBL = null;
+    public DcMotor motorBR = null;
 
-    BotConfig indianaGary = new BotConfig();
+    public DcMotor motorLift = null;
+    public Servo grabberR = null;
+    public Servo grabberL = null;
+
+    public DcMotor relicArm = null;
+    public Servo relicLift = null;
+    public Servo relicLock = null;
+    public Servo relicCapture = null;
+
+    public Servo jewelArm = null;
+    private ColorSensor colorSensorF;    // Hardware Device Object
+    private ColorSensor colorSensorB;
+
 
     long PositionStart;
     long PositionMax;
@@ -72,31 +87,76 @@ public class DriverMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
          */
-        indianaGary.drive.init(hardwareMap);
-        indianaGary.myGlyphLifter.init(hardwareMap);
-        indianaGary.myRelicArm.init(hardwareMap);
-        indianaGary.myJewelArm.init(hardwareMap); //need to initialize to prevent arm from dropping
-        indianaGary.drive.motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        indianaGary.drive.motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFL  = hardwareMap.dcMotor.get("motor_fl");
+        motorFR  = hardwareMap.dcMotor.get("motor_fr");
+        motorBL  = hardwareMap.dcMotor.get("motor_bl");
+        motorBR  = hardwareMap.dcMotor.get("motor_br");
+
+        // eg: Set the drive motor directions:
+        // "Reverse" the motor that runs backwards when connected directly to the battery
+        motorFL.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorFR.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        motorBL.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorBR.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+
+        motorLift  = hardwareMap.dcMotor.get("motor_glyph_lifter");
+        grabberL = hardwareMap.servo.get("servo_glyph_left");
+        grabberR = hardwareMap.servo.get("servo_glyph_right");
+        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LifterPower = 0.2;
+
+        relicArm = hardwareMap.dcMotor.get("motor_relic_arm");
+        relicLift = hardwareMap.servo.get("servo_relic_lift");
+        relicLock = hardwareMap.servo.get("servo_relic_lock");
+        relicCapture = hardwareMap.servo.get("servo_relic_capture");
+
+        jewelArm = hardwareMap.servo.get("servo_jewel_arm");
+        colorSensorF = hardwareMap.get(ColorSensor.class, "sensor_color_f");
+        colorSensorB = hardwareMap.get(ColorSensor.class, "sensor_color_b");
+        colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a));
+        colorSensorF.enableLed(false);
+        colorSensorB.enableLed(false);
+
 
         //Set preset positions for Glyph Lifter
-        PositionStart = indianaGary.myGlyphLifter.motorLift.getCurrentPosition();
+        PositionStart = motorLift.getCurrentPosition();
         PositionMax = PositionStart + 1680;
         Position1 = PositionStart + 100;
         Position2 = PositionStart + 750;
         Position3 = PositionStart + 1350;
         bAuto = false; //Used to enable auto motion of Glyph Lifter to preset Positions
-        LifterPower = 0.2;
         GotoPosition = PositionStart;
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        // eg: Set the drive motor directions:
+        // "Reverse" the motor that runs backwards when connected directly to the battery
+        motorLift.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        //motorLift.
 
+        double GRABBER_START = 0.5;
+        grabberL.setPosition(GRABBER_START);
+        grabberR.setPosition(GRABBER_START);
+
+        double UNLOCK = 0.0;
+        double LOCK = 0.25;
+        double RELIC_LIFT_DOWN = 0.42;
+        double RELIC_LIFT_UP = 0;
+        double RELIC_CAPTURE_OPEN = 0.71;
+        double RELIC_CAPTURE_CLOSE = 0.5;
+        relicLift.setPosition(RELIC_LIFT_DOWN);
+        relicLock.setPosition(UNLOCK);
+        relicCapture.setPosition(RELIC_CAPTURE_OPEN);
+
+        double JEWEL_ARM_UP = 0.75;
+        double JEWEL_ARM_DOWN = 0.17;
+        jewelArm.setPosition(JEWEL_ARM_UP);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -108,6 +168,10 @@ public class DriverMode extends LinearOpMode {
             //telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.update();
 
+            // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+            //leftMotor.setPower(-gamepad1.left_stick_y);
+            //rightMotor.setPower(-gamepad1.right_stick_y);
+
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = gamepad1.right_stick_x;
@@ -116,30 +180,30 @@ public class DriverMode extends LinearOpMode {
             final double v3 = r * Math.sin(robotAngle) - rightX;
             final double v4 = r * Math.cos(robotAngle) + rightX;
 
-            indianaGary.drive.motorFL.setPower(v1);
-            indianaGary.drive.motorFR.setPower(v2);
-            indianaGary.drive.motorBL.setPower(v3);
-            indianaGary.drive.motorBR.setPower(v4);
+            motorFL.setPower(v1);
+            motorFR.setPower(v2);
+            motorBL.setPower(v3);
+            motorBR.setPower(v4);
 
             //Glyph Grabber Control
             if (gamepad2.right_trigger > 0) {
-                indianaGary.myGlyphLifter.grabberR.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
-                indianaGary.myGlyphLifter.grabberL.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
+                grabberR.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
+                grabberL.setPosition(1 - (gamepad2.right_trigger * 0.2 + 0.5));
             }
 
             //Glyph Lifter Control
             if ((gamepad2.right_stick_y > 0) || (gamepad2.right_stick_y < 0)) {
-                if ((gamepad2.right_stick_y < 0) && (indianaGary.myGlyphLifter.motorLift.getCurrentPosition() <= PositionMax)) {
-                    indianaGary.myGlyphLifter.motorLift.setPower(-gamepad2.right_stick_y*LifterPower*1.1);
+                if ((gamepad2.right_stick_y < 0) && (motorLift.getCurrentPosition() <= PositionMax)) {
+                    motorLift.setPower(-gamepad2.right_stick_y*LifterPower*1.1);
                 }else {
-                    if ((gamepad2.right_stick_y > 0) && (indianaGary.myGlyphLifter.motorLift.getCurrentPosition() >= PositionStart)) {
-                        indianaGary.myGlyphLifter.motorLift.setPower(-gamepad2.right_stick_y*LifterPower*0.9);
+                    if ((gamepad2.right_stick_y > 0) && (motorLift.getCurrentPosition() >= PositionStart)) {
+                        motorLift.setPower(-gamepad2.right_stick_y*LifterPower*0.9);
                     } else {
-                        indianaGary.myGlyphLifter.motorLift.setPower(0);
+                        motorLift.setPower(0);
                     }
                 }
                 //Turn off auto motion as soon as left stick is moved
-                telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
+                telemetry.addData("Lifter at Position: ", motorLift.getCurrentPosition());
                 telemetry.update();
                 bAuto = false;
             }else {
@@ -158,21 +222,21 @@ public class DriverMode extends LinearOpMode {
                     bAuto = true;
                 }
 
-                if ((indianaGary.myGlyphLifter.motorLift.getCurrentPosition() < GotoPosition) && bAuto){
-                    telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
+                if ((motorLift.getCurrentPosition() < GotoPosition) && bAuto){
+                    telemetry.addData("Lifter at Position: ", motorLift.getCurrentPosition());
                     telemetry.addData("RAISING to Position: ", GotoPosition);
                     telemetry.update();
-                    indianaGary.myGlyphLifter.motorLift.setPower(LifterPower*1.1);
+                    motorLift.setPower(LifterPower*1.1);
                 }else{
-                    if ((indianaGary.myGlyphLifter.motorLift.getCurrentPosition() > GotoPosition) && bAuto){
-                        telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
+                    if ((motorLift.getCurrentPosition() > GotoPosition) && bAuto){
+                        telemetry.addData("Lifter at Position: ", motorLift.getCurrentPosition());
                         telemetry.addData("LOWERING to Position: ", GotoPosition);
                         telemetry.update();
-                        indianaGary.myGlyphLifter.motorLift.setPower(-LifterPower*0.9);
+                        motorLift.setPower(-LifterPower*0.9);
                     }else{
                         //Turn off auto motion once at position
                         bAuto = false;
-                        indianaGary.myGlyphLifter.motorLift.setPower(0.0);
+                        //motorLift.setPower(0.005); //Add if we need to hold lifter up
                     }
                 }
 

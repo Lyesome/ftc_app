@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
 
 public class Autonomous_R2 extends LinearOpMode {
-    // Declare OpMode members. 
+    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     BotConfig indianaGary = new BotConfig();
-    private double jeweloffest = 0;
+    private double jewelOffset = 0;
     private double columnOffset = 0;
     private static double Drive_Power = 0.2;
 
@@ -27,7 +27,7 @@ public class Autonomous_R2 extends LinearOpMode {
         indianaGary.drive.init(hardwareMap);
         indianaGary.myJewelArm.init(hardwareMap);
         indianaGary.myGlyphLifter.init(hardwareMap);
-        indianaGary.myVuMark.init(hardwareMap);
+        //indianaGary.myVuMark.init(hardwareMap);
 
 
 
@@ -47,16 +47,16 @@ public class Autonomous_R2 extends LinearOpMode {
         indianaGary.myGlyphLifter.Capture();
         //columnOffset = indianaGary.myVuMark.DecodeImage();
         indianaGary.myJewelArm.LowerArm();
-        jeweloffest = indianaGary.myJewelArm.JewelKnock("blue");
-        if (jeweloffest < 0){
-            indianaGary.drive.Backward(Drive_Power, -jeweloffest);
+        jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
+        if (jewelOffset < 0){
+            indianaGary.drive.Backward(Drive_Power, -jewelOffset);
         }
-        if (jeweloffest > 0){
-            indianaGary.drive.Forward(Drive_Power, jeweloffest);
+        if (jewelOffset > 0){
+            indianaGary.drive.Forward(Drive_Power, jewelOffset);
         }
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Forward(Drive_Power, 24 - jeweloffest);
+        indianaGary.drive.Forward(Drive_Power, 24 - jewelOffset);
 
         indianaGary.drive.TurnLeft(90);
 

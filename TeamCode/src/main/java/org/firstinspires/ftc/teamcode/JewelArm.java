@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class JewelArm {
     private ColorSensor colorSensorF;    // Hardware Device Object
     private ColorSensor colorSensorB;
-    private Servo armServo = null;
+    private Servo jewelArm = null;
     HardwareMap myHWMap;
     final double KNOCK_DISTANCE = 2;
     final double UP_POSITION = 0.75;
@@ -27,12 +27,12 @@ public class JewelArm {
         colorSensorF = myHWMap.get(ColorSensor.class, "sensor_color_f");
         colorSensorB = myHWMap.get(ColorSensor.class, "sensor_color_b");
         colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a));
-        armServo = myHWMap.servo.get("servo_jewel_arm");
+        jewelArm = myHWMap.servo.get("servo_jewel_arm");
 
         colorSensorF.enableLed(false);
         colorSensorB.enableLed(false);
 
-        armServo.setPosition(UP_POSITION);
+        jewelArm.setPosition(UP_POSITION);
     }
 
     public void RaiseArm() {
@@ -41,11 +41,11 @@ public class JewelArm {
         colorSensorB.enableLed(false);
 
         // Raise Jewel Arm
-        armServo.setPosition(UP_POSITION);
+        jewelArm.setPosition(UP_POSITION);
     }
 
     public  void LowerArm(){
-        armServo.setPosition(DOWN_POSITION);
+        jewelArm.setPosition(DOWN_POSITION);
         colorSensorF.enableLed(true);
         colorSensorB.enableLed(true);
 
