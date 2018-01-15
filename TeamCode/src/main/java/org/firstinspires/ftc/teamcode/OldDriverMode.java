@@ -210,6 +210,7 @@ public class OldDriverMode extends LinearOpMode {
                 //Go to preset positions when corresponding button is pressed
                 if (gamepad2.a) {
                     GotoPosition = Position1;
+
                 }
                 if (gamepad2.x) {
                     GotoPosition = Position2;

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -21,14 +22,14 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
         indianaGary.drive.init(hardwareMap);
         indianaGary.myJewelArm.init(hardwareMap);
         indianaGary.myGlyphLifter.init(hardwareMap);
         //indianaGary.myVuMark.init(hardwareMap);
 
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
 
         String Team_Color = "blue";
@@ -40,6 +41,7 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
         // run until the end of the match
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("BL wheel starting at", indianaGary.drive.motorBL.getCurrentPosition());
         telemetry.update();
 
 
@@ -56,7 +58,26 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
         }
         //indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Forward(Drive_Power, 10 - jewelOffset + columnOffset);
+        //indianaGary.drive.Forward(Drive_Power, 10 - jewelOffset + columnOffset);
+        indianaGary.drive.motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        indianaGary.drive.motorBL.setTargetPosition(2000);
+        indianaGary.drive.motorBL.setPower(0.2);
+        sleep(5000);
+        indianaGary.drive.motorBL.setTargetPosition(1000);
+        indianaGary.drive.motorBL.setPower(0.2);
+        indianaGary.drive.motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        indianaGary.drive.motorFL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        indianaGary.drive.motorFL.setTargetPosition(1500);
+        indianaGary.drive.motorFL.setPower(0.2);
+        sleep(5000);
+
+
+        //indianaGary.drive.motorBL.setTargetPosition(500);
+        //indianaGary.drive.motorBL.setPower(0.2);
+
+
+        telemetry.addData("Drive Counts", indianaGary.drive.motorBL.getCurrentPosition());
+        telemetry.update();
 
         //indianaGary.myGlyphLifter.Release();
 

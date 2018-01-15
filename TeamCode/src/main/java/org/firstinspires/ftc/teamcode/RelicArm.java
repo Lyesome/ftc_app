@@ -38,7 +38,7 @@ public class RelicArm {
         relicLock = myHWMap.servo.get("servo_relic_lock");
         RelicArmPower = 0.5;
         double UNLOCK = 0.0;
-        double LOCK = 0.25;
+        double LOCK = 0.1;
         double RELIC_LIFT_DOWN = 0.42;
         double RELIC_LIFT_UP = 0;
         double RELIC_GRAB_OPEN = 0.71;

@@ -15,8 +15,8 @@ public class JewelArm {
     private Servo jewelArm = null;
     HardwareMap myHWMap;
     final double KNOCK_DISTANCE = 2;
-    final double UP_POSITION = 0.75;
-    final double DOWN_POSITION = 0.12;
+    final double UP_POSITION = 0.25;
+    final double DOWN_POSITION = 0.88;
 
     public void JewelArm(){
 
@@ -28,6 +28,7 @@ public class JewelArm {
         colorSensorB = myHWMap.get(ColorSensor.class, "sensor_color_b");
         colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a));
         jewelArm = myHWMap.servo.get("servo_jewel_arm");
+        jewelArm.setDirection(Servo.Direction.REVERSE);
 
         colorSensorF.enableLed(false);
         colorSensorB.enableLed(false);

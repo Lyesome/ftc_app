@@ -21,15 +21,14 @@ public class Autonomous_B2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
         indianaGary.drive.init(hardwareMap);
         indianaGary.myJewelArm.init(hardwareMap);
         indianaGary.myGlyphLifter.init(hardwareMap);
         //indianaGary.myVuMark.init(hardwareMap);
 
-
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
         String Team_Color = "blue";
 

@@ -60,15 +60,17 @@ public class DriverMode extends LinearOpMode {
 
     BotConfig indianaGary = new BotConfig();
 
-    long PositionStart;
-    long PositionMax;
-    long Position1;
-    long Position2;
-    long Position3;
-    long GotoPosition;
+    int PositionStart;
+    int PositionMax;
+    int Position1;
+    int Position2;
+    int Position3;
+    double LifterPower;
 
     boolean bAuto;
-    double LifterPower;
+    boolean TogglePressed = false;
+    boolean ToggleReleased = true;
+
 
     @Override
     public void runOpMode() {
@@ -92,7 +94,6 @@ public class DriverMode extends LinearOpMode {
         Position3 = PositionStart + 1350;
         bAuto = false; //Used to enable auto motion of Glyph Lifter to preset Positions
         LifterPower = 0.2;
-        GotoPosition = PositionStart;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -122,13 +123,30 @@ public class DriverMode extends LinearOpMode {
             indianaGary.drive.motorBR.setPower(v4);
 
             //Glyph Grabber Control
-            if (gamepad2.right_trigger > 0) {
-                indianaGary.myGlyphLifter.grabberR.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
-                indianaGary.myGlyphLifter.grabberL.setPosition(gamepad2.right_trigger * 0.2 + 0.5);
+            if (gamepad2.right_trigger > 0 && !indianaGary.myGlyphLifter.GRAB_LOCKED) {
+                indianaGary.myGlyphLifter.grabberR.setPosition(gamepad2.right_trigger * 0.4 + 0.3);
+                indianaGary.myGlyphLifter.grabberL.setPosition(gamepad2.right_trigger * 0.4 + 0.3);
+            }
+            if (TogglePressed) {
+                ToggleReleased = false;
+            } else {
+                ToggleReleased = true;
+            }
+            TogglePressed = gamepad2.right_bumper;
+            if (ToggleReleased){
+                if (gamepad2.right_bumper && !indianaGary.myGlyphLifter.GRAB_LOCKED){
+                    indianaGary.myGlyphLifter.Grab();
+                } else {
+                    if (gamepad2.right_bumper && indianaGary.myGlyphLifter.GRAB_LOCKED) {
+                        indianaGary.myGlyphLifter.Release();
+                    }
+                }
             }
 
             //Glyph Lifter Control
-            if ((gamepad2.right_stick_y > 0) || (gamepad2.right_stick_y < 0)) {
+            if (gamepad2.right_stick_y != 0) {
+                bAuto = false;
+                indianaGary.myGlyphLifter.motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 if ((gamepad2.right_stick_y < 0) && (indianaGary.myGlyphLifter.motorLift.getCurrentPosition() <= PositionMax)) {
                     indianaGary.myGlyphLifter.motorLift.setPower(-gamepad2.right_stick_y*LifterPower*1.1);
                 }else {
@@ -141,39 +159,22 @@ public class DriverMode extends LinearOpMode {
                 //Turn off auto motion as soon as left stick is moved
                 telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
                 telemetry.update();
-                bAuto = false;
             }else {
                 //Go to preset positions when corresponding button is pressed
                 if (gamepad2.a) {
-                    GotoPosition = Position1;
+                    bAuto = true;
+                    indianaGary.myGlyphLifter.GotoPresetPosition(Position1);
                 }
                 if (gamepad2.x) {
-                    GotoPosition = Position2;
+                    bAuto = true;
+                    indianaGary.myGlyphLifter.GotoPresetPosition(Position2);
                 }
                 if (gamepad2.y) {
-                    GotoPosition = Position3;
-                }
-                if (gamepad2.a || gamepad2.x || gamepad2.y) {
-                    //Turn on auto motion
                     bAuto = true;
+                    indianaGary.myGlyphLifter.GotoPresetPosition(Position3);
                 }
-
-                if ((indianaGary.myGlyphLifter.motorLift.getCurrentPosition() < GotoPosition) && bAuto){
-                    telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
-                    telemetry.addData("RAISING to Position: ", GotoPosition);
-                    telemetry.update();
-                    indianaGary.myGlyphLifter.motorLift.setPower(LifterPower*1.1);
-                }else{
-                    if ((indianaGary.myGlyphLifter.motorLift.getCurrentPosition() > GotoPosition) && bAuto){
-                        telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
-                        telemetry.addData("LOWERING to Position: ", GotoPosition);
-                        telemetry.update();
-                        indianaGary.myGlyphLifter.motorLift.setPower(-LifterPower*0.9);
-                    }else{
-                        //Turn off auto motion once at position
-                        bAuto = false;
-                        indianaGary.myGlyphLifter.motorLift.setPower(0.0);
-                    }
+                if (!bAuto) {
+                    indianaGary.myGlyphLifter.motorLift.setPower(0);
                 }
 
             }

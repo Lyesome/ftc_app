@@ -14,9 +14,11 @@ public class GlyphLifter {
     public DcMotor motorLift = null;
     public Servo grabberR = null;
     public Servo grabberL = null;
-    double GRABBER_START = 0.3;
-    double GRABBER_OPEN = 0.5;
+    double GRABBER_START = 0.0;
+    double GRABBER_OPEN = 0.3;
+    double GRABBER_RELEASE = 0.6;
     double GRABBER_CLOSE = 0.7;
+    boolean GRAB_LOCKED = false;
 
     public void GlyphLifter() {
 
@@ -26,8 +28,8 @@ public class GlyphLifter {
         motorLift = myHWMap.dcMotor.get("motor_glyph_lifter");
         grabberL = myHWMap.servo.get("servo_glyph_left");
         grabberR = myHWMap.servo.get("servo_glyph_right");
-        grabberL.setDirection(Servo.Direction.FORWARD);
-        grabberR.setDirection(Servo.Direction.REVERSE);
+        grabberL.setDirection(Servo.Direction.REVERSE);
+        grabberR.setDirection(Servo.Direction.FORWARD);
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLift.setDirection(DcMotor.Direction.REVERSE);
@@ -53,15 +55,23 @@ public class GlyphLifter {
         }
         motorLift.setPower(0.0);
     }
-    public void Release(){
-        grabberL.setPosition(GRABBER_OPEN);
-        grabberR.setPosition(GRABBER_OPEN);
 
+    public void GotoPresetPosition(int gotoPosition){
+        motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLift.setTargetPosition(gotoPosition);
+        motorLift.setPower(0.4);
     }
-    public void GotoPresetPosition(double gotoPosition){
 
+    public void Grab(){
+        grabberL.setPosition(GRABBER_CLOSE);
+        grabberR.setPosition(GRABBER_CLOSE);
+        GRAB_LOCKED = true;
+    }
 
-
+    public void Release(){
+        grabberL.setPosition(GRABBER_RELEASE);
+        grabberR.setPosition(GRABBER_RELEASE);
+        GRAB_LOCKED = false;
     }
 
 }
