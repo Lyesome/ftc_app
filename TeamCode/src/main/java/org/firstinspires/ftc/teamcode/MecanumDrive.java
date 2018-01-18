@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Path;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -37,8 +41,6 @@ public class MecanumDrive {
         motorBL  = myHWMap.dcMotor.get("motor_bl");
         motorBR  = myHWMap.dcMotor.get("motor_br");
 
-
-
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
         motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -69,7 +71,7 @@ public class MecanumDrive {
         imu = myHWMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
-    private void StopWheels() {
+    public void StopWheels() {
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);
@@ -82,27 +84,34 @@ public class MecanumDrive {
     }
 
 
-    public void Forward(double power, double distance) {
+    public void Forward(LinearOpMode op, double power, double distance) {
         //Drive forward distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 84.92;
-        double startPosition = motorBL.getCurrentPosition();
-        double endPosition = (startPosition + (distance * scaleFactor));
 
-        while (motorBL.getCurrentPosition() < endPosition) {
+        double scaleFactor = 84.92;
+        int startPosition = motorBL.getCurrentPosition();
+        int endPosition = (int) (startPosition + (distance * scaleFactor));
+        //motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //motorBL.setTargetPosition(endPosition);
+        //motorBR.setTargetPosition(endPosition);
+        //motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (motorBL.getCurrentPosition() < endPosition && op.opModeIsActive()) {
             motorFL.setPower(power);
             motorFR.setPower(power);
             motorBL.setPower(power);
             motorBR.setPower(power);
         }
         StopWheels();
+
     }
 
-    public void Backward(double power, double distance) {
+    public void Backward(LinearOpMode op, double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
         double scaleFactor = 84.92;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
-        while (motorBL.getCurrentPosition() > endPosition) {
+        while (motorBL.getCurrentPosition() > endPosition && op.opModeIsActive()) {
             motorFL.setPower(-power);
             motorFR.setPower(-power);
             motorBL.setPower(-power);
@@ -111,12 +120,12 @@ public class MecanumDrive {
         StopWheels();
     }
 
-    public void Right(double power, double distance) {
+    public void Right(LinearOpMode op, double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
         double scaleFactor = 178.34;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
-        while (motorBL.getCurrentPosition() > endPosition) {
+        while (motorBL.getCurrentPosition() > endPosition && op.opModeIsActive()) {
             motorFL.setPower(power);
             motorFR.setPower(-power);
             motorBL.setPower(-power);
@@ -124,12 +133,12 @@ public class MecanumDrive {
         }
         StopWheels();
     }
-    public void Left(double power, double distance) {
+    public void Left(LinearOpMode op, double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
         double scaleFactor = 178.34;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition + (distance * scaleFactor));
-        while (motorBL.getCurrentPosition() < endPosition) {
+        while (motorBL.getCurrentPosition() < endPosition && op.opModeIsActive()) {
             motorFL.setPower(-power);
             motorFR.setPower(power);
             motorBL.setPower(power);
@@ -137,10 +146,10 @@ public class MecanumDrive {
         }
         StopWheels();
     }
-    public void TurnLeft(double Angle){
+    public void TurnLeft(LinearOpMode op, double Angle){
 
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle < (initialAngle + Angle)) {
+        while (imu.getAngularOrientation().firstAngle < (initialAngle + Angle) && op.opModeIsActive()) {
             motorFL.setPower(-Turn_Power);
             motorFR.setPower(Turn_Power);
             motorBL.setPower(-Turn_Power);
@@ -149,9 +158,9 @@ public class MecanumDrive {
         StopWheels();
     }
 
-    public void TurnRight(double Angle){
+    public void TurnRight(LinearOpMode op, double Angle){
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle > (initialAngle - Angle)) {
+        while (imu.getAngularOrientation().firstAngle > (initialAngle - Angle) && op.opModeIsActive()) {
             motorFL.setPower(Turn_Power);
             motorFR.setPower(-Turn_Power);
             motorBL.setPower(Turn_Power);

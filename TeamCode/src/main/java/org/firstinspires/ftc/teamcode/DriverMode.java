@@ -16,7 +16,7 @@ written permission.
 NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
 LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESSFOR A PARTICULAR PURPOSE
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
 FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
 DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
@@ -30,46 +30,32 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.Servo;
 
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * the autonomous or the TeleOp period of an FTC match. The names of OpModes appear on the menu
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
+ * This particular OpMode just executes a basic Tank Drive TeleOp for a PushBot
  * It includes all the skeletal structure that all linear OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Driver Mode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Driver Mode", group="Linear OpMode")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class DriverMode extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
-    BotConfig indianaGary = new BotConfig();
+    private BotConfig indianaGary = new BotConfig();
 
-    int PositionStart;
-    int PositionMax;
-    int Position1;
-    int Position2;
-    int Position3;
-    double LifterPower;
-
-    boolean bAuto;
-    boolean TogglePressed = false;
-    boolean ToggleReleased = true;
 
 
     @Override
@@ -87,13 +73,15 @@ public class DriverMode extends LinearOpMode {
         indianaGary.drive.motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Set preset positions for Glyph Lifter
-        PositionStart = indianaGary.myGlyphLifter.motorLift.getCurrentPosition();
-        PositionMax = PositionStart + 1680;
-        Position1 = PositionStart + 100;
-        Position2 = PositionStart + 750;
-        Position3 = PositionStart + 1350;
-        bAuto = false; //Used to enable auto motion of Glyph Lifter to preset Positions
-        LifterPower = 0.2;
+        int PositionStart = indianaGary.myGlyphLifter.motorLift.getCurrentPosition();
+        int PositionMax = PositionStart + 1680;
+        int Position1 = PositionStart + 100;
+        int Position2 = PositionStart + 750;
+        int Position3 = PositionStart + 1350;
+        boolean TogglePressed = false;
+        boolean ToggleReleased = true;
+        boolean autoLift = false; //Used to enable auto motion of Glyph Lifter to preset Positions
+        double LifterPower = 0.2;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -145,7 +133,7 @@ public class DriverMode extends LinearOpMode {
 
             //Glyph Lifter Control
             if (gamepad2.right_stick_y != 0) {
-                bAuto = false;
+                autoLift = false;
                 indianaGary.myGlyphLifter.motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 if ((gamepad2.right_stick_y < 0) && (indianaGary.myGlyphLifter.motorLift.getCurrentPosition() <= PositionMax)) {
                     indianaGary.myGlyphLifter.motorLift.setPower(-gamepad2.right_stick_y*LifterPower*1.1);
@@ -162,22 +150,24 @@ public class DriverMode extends LinearOpMode {
             }else {
                 //Go to preset positions when corresponding button is pressed
                 if (gamepad2.a) {
-                    bAuto = true;
-                    indianaGary.myGlyphLifter.GotoPresetPosition(Position1);
+                    autoLift = true;
+                    indianaGary.myGlyphLifter.GotoPresetPosition(indianaGary.myGlyphLifter.POS_1);
                 }
                 if (gamepad2.x) {
-                    bAuto = true;
-                    indianaGary.myGlyphLifter.GotoPresetPosition(Position2);
+                    autoLift = true;
+                    indianaGary.myGlyphLifter.GotoPresetPosition(indianaGary.myGlyphLifter.POS_2);
                 }
                 if (gamepad2.y) {
-                    bAuto = true;
-                    indianaGary.myGlyphLifter.GotoPresetPosition(Position3);
+                    autoLift = true;
+                    indianaGary.myGlyphLifter.GotoPresetPosition(indianaGary.myGlyphLifter.POS_3);
                 }
-                if (!bAuto) {
+                if (!autoLift) {
                     indianaGary.myGlyphLifter.motorLift.setPower(0);
                 }
 
             }
+
+            indianaGary.myRelicArm.ArmExtension(gamepad2.left_stick_y);
 
         }
     }

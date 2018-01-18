@@ -43,30 +43,32 @@ public class Autonomous_B2 extends LinearOpMode {
 
 
         //Autonomous Commands
+
         indianaGary.myGlyphLifter.Capture();
         //columnOffset = indianaGary.myVuMark.DecodeImage();
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
         if (jewelOffset < 0){
-            indianaGary.drive.Backward(Drive_Power, -jewelOffset);
+            indianaGary.drive.Backward(this, Drive_Power, -jewelOffset);
         }
         if (jewelOffset > 0){
-            indianaGary.drive.Forward(Drive_Power, jewelOffset);
+            indianaGary.drive.Forward(this, Drive_Power, jewelOffset);
         }
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Backward(Drive_Power, 24 - jewelOffset);
+        indianaGary.drive.Backward(this, Drive_Power, 24 - jewelOffset);
 
-        indianaGary.drive.TurnLeft(90);
+        indianaGary.drive.TurnLeft(this,90);
 
-        indianaGary.drive.Forward(Drive_Power, 12 + columnOffset);
+        indianaGary.drive.Forward(this, Drive_Power, 12 + columnOffset);
 
-        indianaGary.drive.TurnLeft(90);
+        indianaGary.drive.TurnLeft(this, 90);
 
-        indianaGary.drive.Forward(Drive_Power, 3);
+        indianaGary.drive.Forward(this, Drive_Power, 3);
 
         indianaGary.myGlyphLifter.Release();
-        indianaGary.drive.Backward(Drive_Power, 2);
+        indianaGary.drive.Backward(this, Drive_Power, 2);
+
     }
 
 

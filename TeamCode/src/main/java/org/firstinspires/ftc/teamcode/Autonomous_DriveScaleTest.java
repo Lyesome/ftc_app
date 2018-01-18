@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.drm.DrmStore;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -49,27 +51,16 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
         //indianaGary.myGlyphLifter.Capture();
         //columnOffset = indianaGary.myVuMark.DecodeImage();
         //indianaGary.myJewelArm.LowerArm();
-        jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
-        if (jewelOffset < 0){
-            indianaGary.drive.Backward(Drive_Power, -jewelOffset);
-        }
-        if (jewelOffset > 0){
-            indianaGary.drive.Forward(Drive_Power, jewelOffset);
-        }
-        //indianaGary.myJewelArm.RaiseArm();
 
-        //indianaGary.drive.Forward(Drive_Power, 10 - jewelOffset + columnOffset);
-        indianaGary.drive.motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        indianaGary.drive.motorBL.setTargetPosition(2000);
-        indianaGary.drive.motorBL.setPower(0.2);
-        sleep(5000);
-        indianaGary.drive.motorBL.setTargetPosition(1000);
-        indianaGary.drive.motorBL.setPower(0.2);
-        indianaGary.drive.motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        indianaGary.drive.motorFL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        indianaGary.drive.motorFL.setTargetPosition(1500);
-        indianaGary.drive.motorFL.setPower(0.2);
-        sleep(5000);
+            jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
+            if (jewelOffset < 0){
+                indianaGary.drive.Backward(this, Drive_Power, -jewelOffset);
+            }
+            if (jewelOffset > 0){
+                indianaGary.drive.Forward(this, Drive_Power, jewelOffset);
+            }
+            //indianaGary.myJewelArm.RaiseArm();
+            indianaGary.drive.Forward(this, Drive_Power, 36 - jewelOffset + columnOffset);
 
 
         //indianaGary.drive.motorBL.setTargetPosition(500);
@@ -82,8 +73,5 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
         //indianaGary.myGlyphLifter.Release();
 
     }
-
-
-
 
 }

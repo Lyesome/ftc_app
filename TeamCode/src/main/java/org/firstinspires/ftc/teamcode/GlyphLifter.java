@@ -19,6 +19,11 @@ public class GlyphLifter {
     double GRABBER_RELEASE = 0.6;
     double GRABBER_CLOSE = 0.7;
     boolean GRAB_LOCKED = false;
+    int POS_START;
+    int POS_MAX;
+    int POS_1;
+    int POS_2;
+    int POS_3;
 
     public void GlyphLifter() {
 
@@ -33,11 +38,11 @@ public class GlyphLifter {
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLift.setDirection(DcMotor.Direction.REVERSE);
-        double POS_START = motorLift.getCurrentPosition();
-        double POS_MAX = POS_START + 1680;
-        double POS_1 = POS_START + 100;
-        double POS_2 = POS_START + 750;
-        double POS_3 = POS_START + 1350;
+        POS_START = motorLift.getCurrentPosition();
+        POS_MAX = POS_START + 1680;
+        POS_1 = POS_START + 100;
+        POS_2 = POS_START + 750;
+        POS_3 = POS_START + 1350;
 
         grabberL.setPosition(GRABBER_START);
         grabberR.setPosition(GRABBER_START);
@@ -47,13 +52,14 @@ public class GlyphLifter {
     public void Capture(){
         grabberL.setPosition(GRABBER_CLOSE);
         grabberR.setPosition(GRABBER_CLOSE);
-        motorLift.setPower(0.2);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e){
-            Thread.currentThread().interrupt();
-        }
-        motorLift.setPower(0.0);
+        GotoPresetPosition(POS_2);
+        //motorLift.setPower(0.2);
+        //try {
+        //    Thread.sleep(2000);
+        //} catch (InterruptedException e){
+        //    Thread.currentThread().interrupt();
+        //}
+        //motorLift.setPower(0.0);
     }
 
     public void GotoPresetPosition(int gotoPosition){

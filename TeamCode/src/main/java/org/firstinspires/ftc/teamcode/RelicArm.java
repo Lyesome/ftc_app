@@ -13,10 +13,16 @@ public class RelicArm {
     public Servo relicGrab = null;
     public Servo relicLift = null;
     public Servo relicLock = null;
-    public double RelicArmPower;
+    public double RelicArmPower = 0.5;
 
-    double PositionMin;
-    double PositionMax;
+    int POS_START;
+    int POS_MAX;
+    double UNLOCK = 0.0;
+    double LOCK = 0.1;
+    double RELIC_LIFT_DOWN = 0.42;
+    double RELIC_LIFT_UP = 0;
+    double RELIC_GRAB_OPEN = 0.71;
+    double RELIC_GRAB_CLOSE = 0.5;
 
     HardwareMap myHWMap;
 
@@ -36,53 +42,60 @@ public class RelicArm {
         relicGrab = myHWMap.servo.get("servo_relic_capture");
         relicLift = myHWMap.servo.get("servo_relic_lift");
         relicLock = myHWMap.servo.get("servo_relic_lock");
-        RelicArmPower = 0.5;
-        double UNLOCK = 0.0;
-        double LOCK = 0.1;
-        double RELIC_LIFT_DOWN = 0.42;
-        double RELIC_LIFT_UP = 0;
-        double RELIC_GRAB_OPEN = 0.71;
-        double RELIC_GRAB_CLOSE = 0.5;
         relicLift.setPosition(RELIC_LIFT_DOWN);
         relicLock.setPosition(UNLOCK);
         relicGrab.setPosition(RELIC_GRAB_OPEN);
 
         //Set preset positions for Glyph Lifter
-        PositionMin = motorRelicArm.getCurrentPosition();
-        PositionMax = PositionMin + 500;
+        POS_START = motorRelicArm.getCurrentPosition();
+        POS_MAX = POS_START + 500;
     }
 
     public void Lift(){
-        relicLift.setPosition(0.5);
+        relicLift.setPosition(RELIC_LIFT_UP);
     }
     public void Lower(){
-        relicLift.setPosition(0.2);
+        relicLift.setPosition(RELIC_LIFT_DOWN);
     }
 
     public void Lock(){
-        relicLock.setPosition(0.5);
+        relicLock.setPosition(LOCK);
     }
     public void Unlock(){
-        relicLock.setPosition(0.0);
+        relicLock.setPosition(UNLOCK);
     }
 
     public void Grab(){
-        relicGrab.setPosition(0.5);
+        relicGrab.setPosition(RELIC_GRAB_CLOSE);
     }
     public void Release(){
-        relicGrab.setPosition(0.0);
+        relicGrab.setPosition(RELIC_GRAB_OPEN);
     }
 
     public void ArmExtension(double stick){
-        if (stick > 0 && motorRelicArm.getCurrentPosition() < PositionMax) {
+
+        int gotoPosition = motorRelicArm.getCurrentPosition();
+        motorRelicArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (stick > 0 && motorRelicArm.getCurrentPosition() < POS_MAX) {
+            gotoPosition = gotoPosition + 1;
+            motorRelicArm.setTargetPosition(gotoPosition);
             motorRelicArm.setPower(RelicArmPower);
-        } else {
-            if (stick < 0 && motorRelicArm.getCurrentPosition() > PositionMin) {
-                motorRelicArm.setPower(-RelicArmPower);
-            } else {
-                motorRelicArm.setPower(0);
-            }
         }
+
+        if (stick < 0 && motorRelicArm.getCurrentPosition() > POS_START) {
+            gotoPosition = gotoPosition - 1;
+            motorRelicArm.setTargetPosition(gotoPosition);
+            motorRelicArm.setPower(RelicArmPower);
+        }
+        //if (stick > 0 && motorRelicArm.getCurrentPosition() < PositionMax) {
+          //  motorRelicArm.setPower(RelicArmPower);
+        //} else {
+          //  if (stick < 0 && motorRelicArm.getCurrentPosition() > PositionMin) {
+            //    motorRelicArm.setPower(-RelicArmPower);
+            //} else {
+              //  motorRelicArm.setPower(0);
+            //}
+       // }
 
     }
 
