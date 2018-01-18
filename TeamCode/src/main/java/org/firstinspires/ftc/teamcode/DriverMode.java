@@ -65,10 +65,11 @@ public class DriverMode extends LinearOpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
          */
-        indianaGary.drive.init(hardwareMap);
-        indianaGary.myGlyphLifter.init(hardwareMap);
-        indianaGary.myRelicArm.init(hardwareMap);
-        indianaGary.myJewelArm.init(hardwareMap); //need to initialize to prevent arm from dropping
+        indianaGary.InitAll(hardwareMap);
+        //indianaGary.myJewelArm.init(hardwareMap); //need to initialize to prevent arm from dropping
+        //indianaGary.myGlyphLifter.init(hardwareMap);
+        //indianaGary.myRelicArm.init(hardwareMap);
+        //indianaGary.drive.init(hardwareMap);
         indianaGary.drive.motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         indianaGary.drive.motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -78,8 +79,10 @@ public class DriverMode extends LinearOpMode {
         int Position1 = PositionStart + 100;
         int Position2 = PositionStart + 750;
         int Position3 = PositionStart + 1350;
-        boolean TogglePressed = false;
-        boolean ToggleReleased = true;
+        boolean rtTogglePressed = false;
+        boolean rtToggleReleased = true;
+        boolean ltTogglePressed = false;
+        boolean ltToggleReleased = true;
         boolean autoLift = false; //Used to enable auto motion of Glyph Lifter to preset Positions
         double LifterPower = 0.2;
 
@@ -115,13 +118,13 @@ public class DriverMode extends LinearOpMode {
                 indianaGary.myGlyphLifter.grabberR.setPosition(gamepad2.right_trigger * 0.4 + 0.3);
                 indianaGary.myGlyphLifter.grabberL.setPosition(gamepad2.right_trigger * 0.4 + 0.3);
             }
-            if (TogglePressed) {
-                ToggleReleased = false;
+            if (rtTogglePressed) {
+                rtToggleReleased = false;
             } else {
-                ToggleReleased = true;
+                rtToggleReleased = true;
             }
-            TogglePressed = gamepad2.right_bumper;
-            if (ToggleReleased){
+            rtTogglePressed = gamepad2.right_bumper;
+            if (rtToggleReleased){
                 if (gamepad2.right_bumper && !indianaGary.myGlyphLifter.GRAB_LOCKED){
                     indianaGary.myGlyphLifter.Grab();
                 } else {
@@ -167,8 +170,35 @@ public class DriverMode extends LinearOpMode {
 
             }
 
-            indianaGary.myRelicArm.ArmExtension(gamepad2.left_stick_y);
+            indianaGary.myRelicArm.ArmExtension(-gamepad2.left_stick_y);
 
+            if (gamepad2.dpad_up) {
+                indianaGary.myRelicArm.Lift();
+            }
+            if (gamepad2.dpad_down) {
+                indianaGary.myRelicArm.Lower();
+            }
+
+            if (gamepad2.left_trigger > 0) {
+                indianaGary.myRelicArm.relicGrab.setPosition(gamepad2.left_trigger * 0.24 + 0.21);
+            }
+
+            if (ltTogglePressed) {
+                ltToggleReleased = false;
+            } else {
+                ltToggleReleased = true;
+            }
+            ltTogglePressed = gamepad2.left_bumper;
+            if (ltToggleReleased){
+                if (gamepad2.left_bumper && !indianaGary.myRelicArm.LOCKED) {
+                    indianaGary.myRelicArm.Grab();
+                } else {
+                    if (gamepad2.left_bumper && indianaGary.myRelicArm.LOCKED){
+                        indianaGary.myRelicArm.Release();
+                    }
+
+                }
+            }
         }
     }
 }

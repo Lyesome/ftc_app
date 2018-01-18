@@ -30,11 +30,14 @@ public class GlyphLifter {
     }
     public void init(HardwareMap myNewHWMap) {
         myHWMap = myNewHWMap;
-        motorLift = myHWMap.dcMotor.get("motor_glyph_lifter");
         grabberL = myHWMap.servo.get("servo_glyph_left");
         grabberR = myHWMap.servo.get("servo_glyph_right");
         grabberL.setDirection(Servo.Direction.REVERSE);
         grabberR.setDirection(Servo.Direction.FORWARD);
+        grabberL.setPosition(GRABBER_START);
+        grabberR.setPosition(GRABBER_START);
+
+        motorLift = myHWMap.dcMotor.get("motor_glyph_lifter");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLift.setDirection(DcMotor.Direction.REVERSE);
@@ -44,8 +47,6 @@ public class GlyphLifter {
         POS_2 = POS_START + 750;
         POS_3 = POS_START + 1350;
 
-        grabberL.setPosition(GRABBER_START);
-        grabberR.setPosition(GRABBER_START);
 
     }
 
