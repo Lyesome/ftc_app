@@ -25,14 +25,17 @@ public class Autonomous_R1 extends LinearOpMode {
 
         indianaGary.myJewelArm.init(hardwareMap);
         indianaGary.myGlyphLifter.init(hardwareMap);
-        //indianaGary.myRelicArm.init(hardwareMap);
+        indianaGary.myRelicArm.init(hardwareMap);
         indianaGary.drive.init(hardwareMap);
-         //indianaGary.myVuMark.init(hardwareMap);
+        indianaGary.myVuMark.init(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         String Team_Color = "red";
+
+        waitForStart();
+
         runtime.reset();
 
         // run until the end of the match
@@ -45,7 +48,7 @@ public class Autonomous_R1 extends LinearOpMode {
 
 
         indianaGary.myGlyphLifter.Capture();
-        //columnOffset = indianaGary.myVuMark.DecodeImage();
+        columnOffset = indianaGary.myVuMark.DecodeImage();
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
         if (jewelOffset < 0) {

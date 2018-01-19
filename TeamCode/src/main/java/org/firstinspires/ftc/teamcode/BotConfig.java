@@ -14,7 +14,7 @@ public class BotConfig {
 
     RelicArm myRelicArm = new RelicArm();
 
-    //VuMarkDecoder myVuMark = new VuMarkDecoder();
+    VuMarkDecoder myVuMark = new VuMarkDecoder();
 
     GlyphLifter myGlyphLifter = new GlyphLifter();
 
