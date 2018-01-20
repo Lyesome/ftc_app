@@ -42,11 +42,10 @@ public class GlyphLifter {
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLift.setDirection(DcMotor.Direction.REVERSE);
         POS_START = motorLift.getCurrentPosition();
-        POS_MAX = POS_START + 1680;
+        POS_MAX = POS_START + 1750;
         POS_1 = POS_START + 100;
         POS_2 = POS_START + 750;
-        POS_3 = POS_START + 1350;
-
+        POS_3 = POS_START + 1500;
 
     }
 
@@ -66,7 +65,7 @@ public class GlyphLifter {
     public void GotoPresetPosition(int gotoPosition){
         motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLift.setTargetPosition(gotoPosition);
-        motorLift.setPower(0.4);
+        motorLift.setPower(0.6);
     }
 
     public void Grab(){

@@ -146,6 +146,30 @@ public class MecanumDrive {
         }
         StopWheels();
     }
+
+    public void Turn(LinearOpMode op, double Angle){
+
+        double initialAngle = imu.getAngularOrientation().firstAngle;
+        double targetAngle;
+        double threshold = 1;
+        if (Math.abs(initialAngle + Angle) > 180) {
+            targetAngle = initialAngle + Angle - Math.signum(initialAngle + Angle)*360;
+        } else {
+            targetAngle = initialAngle + Angle;
+        }
+        while (Math.abs(imu.getAngularOrientation().firstAngle - targetAngle) > threshold && op.opModeIsActive()) {
+            op.telemetry.addData("Target Angle", targetAngle);
+            op.telemetry.addData("Current Angle", imu.getAngularOrientation().firstAngle);
+            op.telemetry.addData("Difference", Math.abs(imu.getAngularOrientation().firstAngle) - targetAngle);
+            op.telemetry.update();
+            motorFL.setPower(-Turn_Power*Math.signum(Angle));
+            motorFR.setPower(Turn_Power*Math.signum(Angle));
+            motorBL.setPower(-Turn_Power*Math.signum(Angle));
+            motorBR.setPower(Turn_Power*Math.signum(Angle));
+        }
+        StopWheels();
+    }
+
     public void TurnLeft(LinearOpMode op, double Angle){
 
         double initialAngle = imu.getAngularOrientation().firstAngle;

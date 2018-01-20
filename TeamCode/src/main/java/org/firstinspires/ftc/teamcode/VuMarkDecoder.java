@@ -63,8 +63,8 @@ public class VuMarkDecoder {
         //Decode Image and offset final robot position to line up with correct column
         //Return offset distance in inches
         double vuMarkColumnOffset = 0;
-        double columnRightOffset = -4; //Offset in inches from center column; negative is closer to bot's starting position
-        double columnLeftOffset = 4; //Offset in inches from center column; negative is closer to bot's starting position
+        double columnRightOffset = 7.5; //Offset in inches from center column; negative is closer to bot's starting position
+        double columnLeftOffset = -7.5; //Offset in inches from center column; negative is closer to bot's starting position
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 

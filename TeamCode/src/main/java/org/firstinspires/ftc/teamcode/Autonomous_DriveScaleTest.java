@@ -52,7 +52,7 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
         //columnOffset = indianaGary.myVuMark.DecodeImage();
         //indianaGary.myJewelArm.LowerArm();
 
-            jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
+            //jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
             if (jewelOffset < 0){
                 indianaGary.drive.Backward(this, Drive_Power, -jewelOffset);
             }
@@ -60,7 +60,7 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
                 indianaGary.drive.Forward(this, Drive_Power, jewelOffset);
             }
             //indianaGary.myJewelArm.RaiseArm();
-            indianaGary.drive.Forward(this, Drive_Power, 36 - jewelOffset + columnOffset);
+            indianaGary.drive.Right(this, Drive_Power, 10 - jewelOffset + columnOffset);
 
 
         //indianaGary.drive.motorBL.setTargetPosition(500);

@@ -22,11 +22,7 @@ public class Autonomous_B1 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        indianaGary.myJewelArm.init(hardwareMap);
-        indianaGary.myGlyphLifter.init(hardwareMap);
-        indianaGary.myRelicArm.init(hardwareMap);
-        indianaGary.drive.init(hardwareMap);
-        indianaGary.myVuMark.init(hardwareMap);
+        indianaGary.InitAll(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -58,9 +54,9 @@ public class Autonomous_B1 extends LinearOpMode {
             }
             indianaGary.myJewelArm.RaiseArm();
 
-            indianaGary.drive.Backward(this, Drive_Power, 27.5 - jewelOffset + columnOffset);
+            indianaGary.drive.Backward(this, Drive_Power, 36 - jewelOffset + columnOffset);
 
-            indianaGary.drive.TurnRight(this, 90);
+            indianaGary.drive.Turn(this, 90);
 
             indianaGary.drive.Forward(this, Drive_Power, 3);
 

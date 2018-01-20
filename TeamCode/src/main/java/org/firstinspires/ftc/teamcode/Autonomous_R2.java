@@ -23,12 +23,7 @@ public class Autonomous_R2 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        indianaGary.myJewelArm.init(hardwareMap);
-        indianaGary.myGlyphLifter.init(hardwareMap);
-        indianaGary.myRelicArm.init(hardwareMap);
-        indianaGary.drive.init(hardwareMap);
-        indianaGary.myVuMark.init(hardwareMap);
-
+    indianaGary.InitAll(hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 

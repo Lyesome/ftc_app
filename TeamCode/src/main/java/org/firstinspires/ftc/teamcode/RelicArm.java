@@ -23,7 +23,7 @@ public class RelicArm {
     boolean LOCKED = false;
     double RELIC_LIFT_DOWN = 0.585;
     double RELIC_LIFT_UP = 0.64;
-    double RELIC_GRAB_OPEN = 0.21;
+    double RELIC_GRAB_OPEN = 0.15;
     double RELIC_GRAB_CLOSE = 0.45;
 
     HardwareMap myHWMap;
@@ -44,7 +44,7 @@ public class RelicArm {
         //relicLock.setPosition(UNLOCK);
 
         motorRelicArm = myHWMap.dcMotor.get("motor_relic_arm");
-        motorRelicArm.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorRelicArm.setDirection(DcMotor.Direction.REVERSE);
         motorRelicArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRelicArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -65,12 +65,12 @@ public class RelicArm {
 //    public void Unlock(){ relicLock.setPosition(UNLOCK); }
 
     public void Grab(){
-        LOCKED = true;
         relicGrab.setPosition(RELIC_GRAB_CLOSE);
+        LOCKED = true;
     }
     public void Release(){
-        LOCKED = false;
         relicGrab.setPosition(RELIC_GRAB_OPEN);
+        LOCKED = false;
     }
 
     public void ArmExtension(double stick){

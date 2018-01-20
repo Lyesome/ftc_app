@@ -21,12 +21,11 @@ public class Autonomous_B2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry.addData("Status", "Initializing. Please Wait...");
+        telemetry.update();
 
-        indianaGary.myJewelArm.init(hardwareMap);
-        indianaGary.myGlyphLifter.init(hardwareMap);
-        indianaGary.myRelicArm.init(hardwareMap);
-        indianaGary.drive.init(hardwareMap);
-        indianaGary.myVuMark.init(hardwareMap);
+        indianaGary.InitAll(hardwareMap);
+        sleep(500);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -59,11 +58,12 @@ public class Autonomous_B2 extends LinearOpMode {
 
         indianaGary.drive.Backward(this, Drive_Power, 24 - jewelOffset);
 
-        indianaGary.drive.TurnLeft(this,90);
+        //indianaGary.drive.TurnLeft(this,90);
+        indianaGary.drive.Left(this,  Drive_Power, 12);
 
-        indianaGary.drive.Forward(this, Drive_Power, 12 + columnOffset);
-
-        indianaGary.drive.TurnLeft(this, 90);
+        //indianaGary.drive.Forward(this, Drive_Power, 12 + columnOffset);
+        indianaGary.drive.Turn(this,180);
+        //indianaGary.drive.TurnLeft(this, 90);
 
         indianaGary.drive.Forward(this, Drive_Power, 3);
 

@@ -27,6 +27,6 @@ public class BotConfig {
         myRelicArm.init(myNewHWMap);
         myGlyphLifter.init(myNewHWMap);
         drive.init(myNewHWMap);
-
+        myVuMark.init(myNewHWMap);
     }
 }
