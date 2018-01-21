@@ -20,7 +20,7 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jewelOffset = 0;
     private double columnOffset = 0;
-    private static double Drive_Power = 0.2;
+    private static double Drive_Power = 0.5;
 
     @Override
     public void runOpMode() {

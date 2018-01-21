@@ -23,7 +23,7 @@ public class MecanumDrive {
     public DcMotor motorBL = null;
     public DcMotor motorBR = null;
     public static double Drive_Power = 0.5;
-    public static double Turn_Power = 0.3;
+    public static double Turn_Power = 0.15;
     // IMU sensor object
     BNO055IMU imu;
 
@@ -122,7 +122,7 @@ public class MecanumDrive {
 
     public void Right(LinearOpMode op, double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 178.34;
+        double scaleFactor = 116.94;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
         while (motorBL.getCurrentPosition() > endPosition && op.opModeIsActive()) {
@@ -135,7 +135,7 @@ public class MecanumDrive {
     }
     public void Left(LinearOpMode op, double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 178.34;
+        double scaleFactor = 116.94;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition + (distance * scaleFactor));
         while (motorBL.getCurrentPosition() < endPosition && op.opModeIsActive()) {
@@ -148,24 +148,37 @@ public class MecanumDrive {
     }
 
     public void Turn(LinearOpMode op, double Angle){
-
+        // + is left, - is right
         double initialAngle = imu.getAngularOrientation().firstAngle;
         double targetAngle;
-        double threshold = 1;
+        double turnPower = 0.4;
+        double threshold = .1;
+        double difference;
         if (Math.abs(initialAngle + Angle) > 180) {
             targetAngle = initialAngle + Angle - Math.signum(initialAngle + Angle)*360;
         } else {
             targetAngle = initialAngle + Angle;
         }
-        while (Math.abs(imu.getAngularOrientation().firstAngle - targetAngle) > threshold && op.opModeIsActive()) {
+        difference = targetAngle - imu.getAngularOrientation().firstAngle;
+        while (Math.abs(difference) > threshold && op.opModeIsActive()) {
+            turnPower = Math.signum(difference)*Math.sqrt(Math.abs(difference/targetAngle))/3;
+            if (Math.abs(difference) <= 180) {
+                motorFL.setPower(-turnPower);
+                motorFR.setPower(turnPower);
+                motorBL.setPower(-turnPower);
+                motorBR.setPower(turnPower);
+            } else {
+                motorFL.setPower(turnPower);
+                motorFR.setPower(-turnPower);
+                motorBL.setPower(turnPower);
+                motorBR.setPower(-turnPower);
+            }
+            difference = targetAngle - imu.getAngularOrientation().firstAngle;
             op.telemetry.addData("Target Angle", targetAngle);
             op.telemetry.addData("Current Angle", imu.getAngularOrientation().firstAngle);
-            op.telemetry.addData("Difference", Math.abs(imu.getAngularOrientation().firstAngle) - targetAngle);
+            op.telemetry.addData("Difference", difference);
+            op.telemetry.addData("Power", turnPower);
             op.telemetry.update();
-            motorFL.setPower(-Turn_Power*Math.signum(Angle));
-            motorFR.setPower(Turn_Power*Math.signum(Angle));
-            motorBL.setPower(-Turn_Power*Math.signum(Angle));
-            motorBR.setPower(Turn_Power*Math.signum(Angle));
         }
         StopWheels();
     }
@@ -178,6 +191,10 @@ public class MecanumDrive {
             motorFR.setPower(Turn_Power);
             motorBL.setPower(-Turn_Power);
             motorBR.setPower(Turn_Power);
+            op.telemetry.addData("Target Angle", Angle);
+            op.telemetry.addData("Current Angle", imu.getAngularOrientation().firstAngle);
+            op.telemetry.update();
+
         }
         StopWheels();
     }

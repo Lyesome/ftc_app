@@ -23,7 +23,7 @@ public class RelicArm {
     boolean LOCKED = false;
     double RELIC_LIFT_DOWN = 0.585;
     double RELIC_LIFT_UP = 0.64;
-    double RELIC_GRAB_OPEN = 0.15;
+    double RELIC_GRAB_OPEN = 0.10;
     double RELIC_GRAB_CLOSE = 0.45;
 
     HardwareMap myHWMap;
@@ -51,7 +51,7 @@ public class RelicArm {
 
         //Set preset positions for Glyph Lifter
         POS_MIN = motorRelicArm.getCurrentPosition();
-        POS_MAX = POS_MIN + 6575;
+        POS_MAX = POS_MIN + 6000;
     }
 
     public void Lift(){

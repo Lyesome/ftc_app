@@ -77,7 +77,7 @@ public class DriverMode extends LinearOpMode {
 
         //Set preset positions for Glyph Lifter
         int PositionStart = indianaGary.myGlyphLifter.motorLift.getCurrentPosition();
-        int PositionMax = PositionStart + 1750;
+        int PositionMax = PositionStart + 1900;
         int Position1 = PositionStart + 100;
         int Position2 = PositionStart + 750;
         int Position3 = PositionStart + 1350;
@@ -105,16 +105,18 @@ public class DriverMode extends LinearOpMode {
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = -DriverControls.TurnStick(this);
+            double trottle = gamepad1.right_trigger * 0.70 + 0.30;
             //double rightX = -gamepad1.right_stick_x;
             final double v1 = r * Math.cos(robotAngle) - rightX;
             final double v2 = r * Math.sin(robotAngle) + rightX;
             final double v3 = r * Math.sin(robotAngle) - rightX;
             final double v4 = r * Math.cos(robotAngle) + rightX;
 
-            indianaGary.drive.motorFL.setPower(v1*v1*v1);
-            indianaGary.drive.motorFR.setPower(v2*v2*v2);
-            indianaGary.drive.motorBL.setPower(v3*v3*v3);
-            indianaGary.drive.motorBR.setPower(v4*v4*v4);
+            indianaGary.drive.motorFL.setPower(v1*trottle);
+            indianaGary.drive.motorFR.setPower(v2*trottle);
+            indianaGary.drive.motorBL.setPower(v3*trottle);
+            indianaGary.drive.motorBR.setPower(v4*trottle);
+
 
             //Glyph Grabber Control
             if (gamepad2.right_trigger > 0 && !indianaGary.myGlyphLifter.GRAB_LOCKED) {
@@ -174,10 +176,11 @@ public class DriverMode extends LinearOpMode {
                 if (!autoLift) {
                     indianaGary.myGlyphLifter.motorLift.setPower(0);
                 }
-
             }
 
             indianaGary.myRelicArm.ArmExtension(-gamepad2.left_stick_y);
+            telemetry.addData("Arm Position", indianaGary.myRelicArm.motorRelicArm.getCurrentPosition());
+            telemetry.update();
 
             if (gamepad2.dpad_up) {
                 indianaGary.myRelicArm.Lift();

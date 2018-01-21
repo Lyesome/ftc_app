@@ -17,7 +17,7 @@ public class GlyphLifter {
     double GRABBER_START = 0.0;
     double GRABBER_OPEN = 0.3;
     double GRABBER_RELEASE = 0.6;
-    double GRABBER_CLOSE = 0.7;
+    double GRABBER_CLOSE = 0.8;
     boolean GRAB_LOCKED = false;
     int POS_START;
     int POS_MAX;
@@ -42,7 +42,7 @@ public class GlyphLifter {
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLift.setDirection(DcMotor.Direction.REVERSE);
         POS_START = motorLift.getCurrentPosition();
-        POS_MAX = POS_START + 1750;
+        POS_MAX = POS_START + 1900;
         POS_1 = POS_START + 100;
         POS_2 = POS_START + 750;
         POS_3 = POS_START + 1500;
