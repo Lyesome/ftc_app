@@ -20,10 +20,12 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jewelOffset = 0;
     private double columnOffset = 0;
-    private static double Drive_Power = 0.5;
+    private static double Drive_Power = 0.2;
 
     @Override
     public void runOpMode() {
+        telemetry.addData("Status", "Initializing. Please Wait...");
+        telemetry.update();
 
         indianaGary.drive.init(hardwareMap);
         indianaGary.myJewelArm.init(hardwareMap);
@@ -53,22 +55,19 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
         //indianaGary.myJewelArm.LowerArm();
 
             //jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
+            jewelOffset = -2;
             if (jewelOffset < 0){
-                indianaGary.drive.Backward(this, Drive_Power, -jewelOffset);
+                indianaGary.drive.Drive(this, Drive_Power, jewelOffset);
             }
             if (jewelOffset > 0){
                 indianaGary.drive.Forward(this, Drive_Power, jewelOffset);
             }
             //indianaGary.myJewelArm.RaiseArm();
-            indianaGary.drive.Right(this, Drive_Power, 10 - jewelOffset + columnOffset);
-
-
+             indianaGary.drive.Drive(this, 0.3, 36 - jewelOffset + columnOffset);
+            sleep(5000);
         //indianaGary.drive.motorBL.setTargetPosition(500);
         //indianaGary.drive.motorBL.setPower(0.2);
 
-
-        telemetry.addData("Drive Counts", indianaGary.drive.motorBL.getCurrentPosition());
-        telemetry.update();
 
         //indianaGary.myGlyphLifter.Release();
 

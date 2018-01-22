@@ -11,19 +11,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class GlyphLifter {
 
     HardwareMap myHWMap;
-    public DcMotor motorLift = null;
-    public Servo grabberR = null;
-    public Servo grabberL = null;
-    double GRABBER_START = 0.0;
-    double GRABBER_OPEN = 0.3;
-    double GRABBER_RELEASE = 0.6;
-    double GRABBER_CLOSE = 0.8;
-    boolean GRAB_LOCKED = false;
-    int POS_START;
-    int POS_MAX;
-    int POS_1;
-    int POS_2;
-    int POS_3;
+    public      DcMotor motorLift   = null;
+    public      Servo grabberR      = null;
+    public      Servo grabberL      = null;
+    double      GRABBER_START       =  0.0;
+    double      GRABBER_OPEN        =  0.3;
+    double      GRABBER_RELEASE     =  0.6;
+    double      GRABBER_CLOSE       =  0.8;
+    double      LIFT_UP_POWER       =  0.5;
+    double      LIFT_DOWN_POWER     =  0.3;
+    boolean     GRAB_LOCKED         = false;
+    int         POS_START;
+    int         POS_MAX;
+    int         POS_1;
+    int         POS_2;
+    int         POS_3;
 
     public void GlyphLifter() {
 
@@ -42,13 +44,32 @@ public class GlyphLifter {
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLift.setDirection(DcMotor.Direction.REVERSE);
         POS_START = motorLift.getCurrentPosition();
-        POS_MAX = POS_START + 1900;
-        POS_1 = POS_START + 100;
-        POS_2 = POS_START + 750;
-        POS_3 = POS_START + 1500;
-
+        POS_MAX   = POS_START + 1900;
+        POS_1     = POS_START + 100;
+        POS_2     = POS_START + 750;
+        POS_3     = POS_START + 1500;
     }
 
+    public void GrabberControl(double trigger){
+        if (trigger > 0) {
+            grabberR.setPosition(trigger * (GRABBER_CLOSE - GRABBER_OPEN) + GRABBER_OPEN);
+            grabberL.setPosition(trigger * (GRABBER_CLOSE - GRABBER_OPEN) + GRABBER_OPEN);
+        }
+    }
+
+    public void LifterControl(double stick){
+        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if ((stick > 0) && (motorLift.getCurrentPosition() <= POS_MAX)) {
+            motorLift.setPower(stick*LIFT_UP_POWER);
+        }else {
+            if ((stick < 0) && (motorLift.getCurrentPosition() >= POS_START)) {
+                motorLift.setPower(stick*LIFT_DOWN_POWER);
+            } else {
+                motorLift.setPower(0);
+            }
+        }
+
+    }
     public void Capture(){
         grabberL.setPosition(GRABBER_CLOSE);
         grabberR.setPosition(GRABBER_CLOSE);

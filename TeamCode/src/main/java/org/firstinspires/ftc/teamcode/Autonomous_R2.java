@@ -23,7 +23,9 @@ public class Autonomous_R2 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-    indianaGary.InitAll(hardwareMap);
+        telemetry.addData("Status", "Initializing. Please Wait...");
+        telemetry.update();
+        indianaGary.InitAll(hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -52,7 +54,7 @@ public class Autonomous_R2 extends LinearOpMode {
         if (jewelOffset > 0){
             indianaGary.drive.Forward(this, Drive_Power, jewelOffset); }
         indianaGary.myJewelArm.RaiseArm();
-        indianaGary.drive.Forward(this, Drive_Power, 24 - jewelOffset);
+        indianaGary.drive.Forward(this, Drive_Power, 36 - jewelOffset);
         indianaGary.drive.TurnLeft(this, 90);
         indianaGary.drive.Forward(this, Drive_Power, 12 + columnOffset);
         indianaGary.drive.TurnRight(this, 90);

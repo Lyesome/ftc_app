@@ -27,7 +27,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -68,25 +67,16 @@ public class DriverMode extends LinearOpMode {
         telemetry.addData("Status", "Initializing. Please Wait...");
         telemetry.update();
         indianaGary.InitAll(hardwareMap);
-        //indianaGary.myJewelArm.init(hardwareMap); //need to initialize to prevent arm from dropping
-        //indianaGary.myGlyphLifter.init(hardwareMap);
-        //indianaGary.myRelicArm.init(hardwareMap);
-        //indianaGary.drive.init(hardwareMap);
         indianaGary.drive.motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         indianaGary.drive.motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //Set preset positions for Glyph Lifter
-        int PositionStart = indianaGary.myGlyphLifter.motorLift.getCurrentPosition();
-        int PositionMax = PositionStart + 1900;
-        int Position1 = PositionStart + 100;
-        int Position2 = PositionStart + 750;
-        int Position3 = PositionStart + 1350;
+        //Set toggle initial states
         boolean rtTogglePressed = false;
         boolean rtToggleReleased = true;
         boolean ltTogglePressed = false;
         boolean ltToggleReleased = true;
         boolean autoLift = false; //Used to enable auto motion of Glyph Lifter to preset Positions
-        double LifterPower = 0.4;
+        double DRIVE_POWER_MAX_LOW = 0.3; //Maximum drive power with not throttle
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -105,12 +95,12 @@ public class DriverMode extends LinearOpMode {
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = -DriverControls.TurnStick(this);
-            double trottle = gamepad1.right_trigger * 0.70 + 0.30;
+            double trottle = gamepad1.right_trigger * (1-DRIVE_POWER_MAX_LOW) + DRIVE_POWER_MAX_LOW;
             //double rightX = -gamepad1.right_stick_x;
-            final double v1 = r * Math.cos(robotAngle) - rightX;
-            final double v2 = r * Math.sin(robotAngle) + rightX;
-            final double v3 = r * Math.sin(robotAngle) - rightX;
-            final double v4 = r * Math.cos(robotAngle) + rightX;
+            final double v1 = r * Math.cos(robotAngle) - Math.pow(rightX, 3);
+            final double v2 = r * Math.sin(robotAngle) + Math.pow(rightX, 3);
+            final double v3 = r * Math.sin(robotAngle) - Math.pow(rightX, 3);
+            final double v4 = r * Math.cos(robotAngle) + Math.pow(rightX, 3);
 
             indianaGary.drive.motorFL.setPower(v1*trottle);
             indianaGary.drive.motorFR.setPower(v2*trottle);
@@ -119,9 +109,8 @@ public class DriverMode extends LinearOpMode {
 
 
             //Glyph Grabber Control
-            if (gamepad2.right_trigger > 0 && !indianaGary.myGlyphLifter.GRAB_LOCKED) {
-                indianaGary.myGlyphLifter.grabberR.setPosition(gamepad2.right_trigger * 0.4 + 0.3);
-                indianaGary.myGlyphLifter.grabberL.setPosition(gamepad2.right_trigger * 0.4 + 0.3);
+            if (!indianaGary.myGlyphLifter.GRAB_LOCKED) {
+                indianaGary.myGlyphLifter.GrabberControl(gamepad2.right_trigger);
             }
             if (rtTogglePressed) {
                 rtToggleReleased = false;
@@ -142,16 +131,7 @@ public class DriverMode extends LinearOpMode {
             //Glyph Lifter Control
             if (gamepad2.right_stick_y != 0) {
                 autoLift = false;
-                indianaGary.myGlyphLifter.motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                if ((gamepad2.right_stick_y < 0) && (indianaGary.myGlyphLifter.motorLift.getCurrentPosition() <= PositionMax)) {
-                    indianaGary.myGlyphLifter.motorLift.setPower(-gamepad2.right_stick_y*LifterPower*1.1);
-                }else {
-                    if ((gamepad2.right_stick_y > 0) && (indianaGary.myGlyphLifter.motorLift.getCurrentPosition() >= PositionStart)) {
-                        indianaGary.myGlyphLifter.motorLift.setPower(-gamepad2.right_stick_y*LifterPower*0.9);
-                    } else {
-                        indianaGary.myGlyphLifter.motorLift.setPower(0);
-                    }
-                }
+                indianaGary.myGlyphLifter.LifterControl(-gamepad2.right_stick_y);
                 //Turn off auto motion as soon as left stick is moved
                 telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
                 telemetry.update();
@@ -178,19 +158,22 @@ public class DriverMode extends LinearOpMode {
                 }
             }
 
+            //Relic Capture Control
             indianaGary.myRelicArm.ArmExtension(-gamepad2.left_stick_y);
             telemetry.addData("Arm Position", indianaGary.myRelicArm.motorRelicArm.getCurrentPosition());
             telemetry.update();
 
-            if (gamepad2.dpad_up) {
+            //The check for Relic Grabber's position is to prevent the Lifter from accidentally
+            //lifting when the relic isn't being grabbed
+            if (gamepad2.dpad_up && indianaGary.myRelicArm.relicGrab.getPosition() > 0.25) {
                 indianaGary.myRelicArm.Lift();
             }
             if (gamepad2.dpad_down) {
                 indianaGary.myRelicArm.Lower();
             }
 
-            if (gamepad2.left_trigger > 0 && !indianaGary.myRelicArm.LOCKED) {
-                indianaGary.myRelicArm.relicGrab.setPosition(gamepad2.left_trigger * 0.24 + 0.21);
+            if (!indianaGary.myRelicArm.LOCKED) {
+                indianaGary.myRelicArm.GrabberControl(gamepad2.left_trigger);
             }
 
             if (ltTogglePressed) {

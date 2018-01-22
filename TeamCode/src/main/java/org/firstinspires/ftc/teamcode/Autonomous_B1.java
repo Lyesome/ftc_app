@@ -21,7 +21,8 @@ public class Autonomous_B1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        telemetry.addData("Status", "Initializing. Please Wait...");
+        telemetry.update();
         indianaGary.InitAll(hardwareMap);
 
         telemetry.addData("Status", "Initialized");

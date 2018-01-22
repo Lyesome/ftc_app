@@ -18,11 +18,13 @@ public class Autonomous_R1 extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jewelOffset = 0;
     private double columnOffset = 0;
-    private static double Drive_Power = 0.2;
+    private static double Drive_Power = 0.3;
 
     @Override
     public void runOpMode() {
 
+        telemetry.addData("Status", "Initializing. Please Wait...");
+        telemetry.update();
         indianaGary.InitAll(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
@@ -47,22 +49,24 @@ public class Autonomous_R1 extends LinearOpMode {
         columnOffset = indianaGary.myVuMark.DecodeImage();
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
-        if (jewelOffset < 0) {
-            indianaGary.drive.Backward(this, Drive_Power, -jewelOffset);
-        }
-        if (jewelOffset > 0) {
-            indianaGary.drive.Forward(this, Drive_Power, jewelOffset);
-        }
+        
+        indianaGary.drive.Drive(this, Drive_Power, jewelOffset);
+
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Forward(this, Drive_Power, 36 - jewelOffset + columnOffset);
+        indianaGary.drive.Drive(this, Drive_Power, 36 - jewelOffset + columnOffset);
 
-        indianaGary.drive.TurnRight(this, 90);
+        indianaGary.drive.Turn(this, -90);
 
-        indianaGary.drive.Forward(this, Drive_Power, 3);
+        indianaGary.drive.Drive(this, Drive_Power, 2);
 
         indianaGary.myGlyphLifter.Release();
-        indianaGary.drive.Backward(this, Drive_Power, 2);
+        indianaGary.myGlyphLifter.GotoPresetPosition(0);
+        sleep(1000);
+        //indianaGary.drive.Turn(this,180);
+        //indianaGary.myGlyphLifter.init(hardwareMap);
+        //indianaGary.drive.Drive(this, Drive_Power, -1);
+
     }
 
 

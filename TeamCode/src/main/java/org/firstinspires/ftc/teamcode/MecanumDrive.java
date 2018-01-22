@@ -72,10 +72,10 @@ public class MecanumDrive {
         imu.initialize(parameters);
     }
     public void StopWheels() {
-        motorFL.setPower(0);
         motorFR.setPower(0);
-        motorBL.setPower(0);
         motorBR.setPower(0);
+        motorFL.setPower(0);
+        motorBL.setPower(0);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e){
@@ -83,24 +83,68 @@ public class MecanumDrive {
         }
     }
 
+    public void Drive(LinearOpMode op, double power, double distance){
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        double scaleFactor = 83.33;
+        double drivePower = power;
+        double heading = imu.getAngularOrientation().firstAngle;
+        int startPosition = motorBL.getCurrentPosition();
+        int endPosition = startPosition + (int)Math.round(distance * scaleFactor);
+        motorBL.setTargetPosition(endPosition);
+        motorBR.setTargetPosition(endPosition);
+        motorBL.setPower(power);
+        motorBR.setPower(power);
+        motorFR.setPower(Math.signum(distance)*motorBL.getPower());
+        motorFL.setPower(Math.signum(distance)*motorBL.getPower());
+        while (motorBL.isBusy() && op.opModeIsActive()){
+            if (Math.abs(motorBL.getCurrentPosition() - endPosition) < 500) {
+                drivePower = 0.05 + power * Math.abs(motorBL.getCurrentPosition() - endPosition)/500 ;
+            }
+            motorBL.setPower(drivePower);
+            motorBR.setPower(drivePower);
+            motorFL.setPower(Math.signum(distance)*motorBL.getPower());
+            motorFR.setPower(Math.signum(distance)*motorBR.getPower());
+            op.telemetry.addData("Start", startPosition);
+            op.telemetry.addData("Heading", imu.getAngularOrientation().firstAngle);
+            op.telemetry.addData("Go to", endPosition);
+            op.telemetry.addData("BR Position", motorBR.getCurrentPosition());
+            op.telemetry.addData("BL Position", motorBL.getCurrentPosition());
+            op.telemetry.update();
+        }
+        StopWheels();
+        op.telemetry.addData("Start", startPosition);
+        op.telemetry.addData("Heading", imu.getAngularOrientation().firstAngle);
+        op.telemetry.addData("Go to", endPosition);
+        op.telemetry.addData("BR Position", motorBR.getCurrentPosition());
+        op.telemetry.addData("BL Position", motorBL.getCurrentPosition());
+        op.telemetry.update();
+
+    }
 
     public void Forward(LinearOpMode op, double power, double distance) {
         //Drive forward distance in inches. Use "scaleFactor" to convert inches to encoder values.
 
-        double scaleFactor = 84.92;
+        double scaleFactor = 86.116;
         int startPosition = motorBL.getCurrentPosition();
         int endPosition = (int) (startPosition + (distance * scaleFactor));
-        //motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorBL.setTargetPosition(endPosition);
-        //motorBR.setTargetPosition(endPosition);
-        //motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (motorBL.getCurrentPosition() < endPosition && op.opModeIsActive()) {
-            motorFL.setPower(power);
-            motorFR.setPower(power);
-            motorBL.setPower(power);
-            motorBR.setPower(power);
+        int threshold = 3;
+        double drivePower = power;
+         while (Math.signum(motorBL.getCurrentPosition() - endPosition) > threshold && op.opModeIsActive()) {
+            motorFL.setPower(drivePower);
+            motorFR.setPower(drivePower);
+            motorBL.setPower(drivePower);
+            motorBR.setPower(drivePower);
+            if (Math.abs(motorBL.getCurrentPosition() - endPosition) < 500) {
+                drivePower = power * Math.abs(motorBL.getCurrentPosition() - endPosition)/500 ;
+            }
+            op.telemetry.addData("Target Position", endPosition);
+            op.telemetry.addData("Current Position", motorBL.getCurrentPosition());
+            op.telemetry.addData("Remaining Distance", Math.signum(motorBL.getCurrentPosition() - endPosition));
+            op.telemetry.addData("Drive Power", drivePower);
+            op.telemetry.update();
         }
         StopWheels();
 
@@ -108,7 +152,7 @@ public class MecanumDrive {
 
     public void Backward(LinearOpMode op, double power, double distance) {
         //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 84.92;
+        double scaleFactor = 86.116;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
         while (motorBL.getCurrentPosition() > endPosition && op.opModeIsActive()) {
@@ -149,6 +193,10 @@ public class MecanumDrive {
 
     public void Turn(LinearOpMode op, double Angle){
         // + is left, - is right
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double initialAngle = imu.getAngularOrientation().firstAngle;
         double targetAngle;
         double turnPower = 0.4;
