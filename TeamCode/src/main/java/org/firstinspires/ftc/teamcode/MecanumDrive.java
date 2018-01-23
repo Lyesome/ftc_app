@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Path;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
@@ -24,6 +20,7 @@ public class MecanumDrive {
     public DcMotor motorBR = null;
     public static double Drive_Power = 0.5;
     public static double Turn_Power = 0.15;
+    double DRIVE_POWER_MAX_LOW = 0.3; //Maximum drive power with not throttle
     // IMU sensor object
     BNO055IMU imu;
 
@@ -71,6 +68,26 @@ public class MecanumDrive {
         imu = myHWMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
+
+    public void DriveControl(double yStick, double xStick, double turnStick, double trigger){
+        double r = Math.hypot(xStick, yStick);
+        double robotAngle = Math.atan2(-yStick, xStick) - Math.PI / 4;
+
+        //double rightX = -BotControls.TurnStick(this);
+        double trottle = trigger * (1-DRIVE_POWER_MAX_LOW) + DRIVE_POWER_MAX_LOW;
+        //double rightX = -BotControls.TurnStick(this);
+        double rightX = turnStick;
+        final double v1 = r * Math.cos(robotAngle) + Math.pow(rightX, 3);
+        final double v2 = r * Math.sin(robotAngle) - Math.pow(rightX, 3);
+        final double v3 = r * Math.sin(robotAngle) + Math.pow(rightX, 3);
+        final double v4 = r * Math.cos(robotAngle) - Math.pow(rightX, 3);
+
+        motorFL.setPower(v1*trottle);
+        motorFR.setPower(v2*trottle);
+        motorBL.setPower(v3*trottle);
+        motorBR.setPower(v4*trottle);
+    }
+
     public void StopWheels() {
         motorFR.setPower(0);
         motorBR.setPower(0);

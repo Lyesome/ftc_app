@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Created by maris on 2018-01-13. EXPERIMENTAL
  */
 
-public class DriverControls {
+public class BotControls {
 
-    public DriverControls()  { // constructor
+    public BotControls()  { // constructor
 
     }
 

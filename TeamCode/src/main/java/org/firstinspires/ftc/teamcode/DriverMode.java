@@ -92,21 +92,7 @@ public class DriverMode extends LinearOpMode {
             //telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.update();
 
-            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = -DriverControls.TurnStick(this);
-            double trottle = gamepad1.right_trigger * (1-DRIVE_POWER_MAX_LOW) + DRIVE_POWER_MAX_LOW;
-            //double rightX = -gamepad1.right_stick_x;
-            final double v1 = r * Math.cos(robotAngle) - Math.pow(rightX, 3);
-            final double v2 = r * Math.sin(robotAngle) + Math.pow(rightX, 3);
-            final double v3 = r * Math.sin(robotAngle) - Math.pow(rightX, 3);
-            final double v4 = r * Math.cos(robotAngle) + Math.pow(rightX, 3);
-
-            indianaGary.drive.motorFL.setPower(v1*trottle);
-            indianaGary.drive.motorFR.setPower(v2*trottle);
-            indianaGary.drive.motorBL.setPower(v3*trottle);
-            indianaGary.drive.motorBR.setPower(v4*trottle);
-
+            indianaGary.drive.DriveControl(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_trigger);
 
             //Glyph Grabber Control
             if (!indianaGary.myGlyphLifter.GRAB_LOCKED) {
