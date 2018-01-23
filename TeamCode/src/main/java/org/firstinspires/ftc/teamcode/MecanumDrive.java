@@ -201,16 +201,19 @@ public class MecanumDrive {
         double targetAngle;
         double turnPower = 0.4;
         double threshold = .1;
+        double initalDiff;
         double difference;
         if (Math.abs(initialAngle + Angle) > 180) {
             targetAngle = initialAngle + Angle - Math.signum(initialAngle + Angle)*360;
         } else {
             targetAngle = initialAngle + Angle;
         }
-        difference = targetAngle - imu.getAngularOrientation().firstAngle;
+        initalDiff = targetAngle - imu.getAngularOrientation().firstAngle;
+        difference = initalDiff;
         while (Math.abs(difference) > threshold && op.opModeIsActive()) {
-            turnPower = Math.signum(difference)*Math.sqrt(Math.abs(difference/targetAngle))/3;
+            turnPower = Math.signum(difference)*Math.sqrt(Math.abs(difference/initalDiff))/2;
             if (Math.abs(difference) <= 180) {
+
                 motorFL.setPower(-turnPower);
                 motorFR.setPower(turnPower);
                 motorBL.setPower(-turnPower);

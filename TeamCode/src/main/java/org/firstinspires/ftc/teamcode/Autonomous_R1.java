@@ -46,10 +46,10 @@ public class Autonomous_R1 extends LinearOpMode {
 
 
         indianaGary.myGlyphLifter.Capture();
-        columnOffset = indianaGary.myVuMark.DecodeImage();
+        columnOffset = indianaGary.myVuMark.DecodeImage(this);
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
-        
+
         indianaGary.drive.Drive(this, Drive_Power, jewelOffset);
 
         indianaGary.myJewelArm.RaiseArm();

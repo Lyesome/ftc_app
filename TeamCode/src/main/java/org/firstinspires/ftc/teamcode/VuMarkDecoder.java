@@ -59,12 +59,12 @@ public class VuMarkDecoder {
 
     }
 
-    public double DecodeImage(){
+    public double DecodeImage(LinearOpMode op){
         //Decode Image and offset final robot position to line up with correct column
         //Return offset distance in inches
         double vuMarkColumnOffset = 0;
-        double columnRightOffset = 7.5; //Offset in inches from center column; negative is closer to bot's starting position
-        double columnLeftOffset = -7.5; //Offset in inches from center column; negative is closer to bot's starting position
+        double columnRightOffset = -7.5; //Offset in inches from center column; negative is closer to bot's starting position
+        double columnLeftOffset = 7.5; //Offset in inches from center column; negative is closer to bot's starting position
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
@@ -81,7 +81,8 @@ public class VuMarkDecoder {
         else {
 
         }
-
+        op.telemetry.addData("Column Offset", vuMarkColumnOffset);
+        op.telemetry.update();
         return vuMarkColumnOffset;
     }
 
