@@ -18,6 +18,7 @@ public class Autonomous_R1 extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jewelOffset = 0;
     private double columnOffset = 0;
+    private double otf_correction = 0;
     private static double Drive_Power = 0.3;
 
     @Override
@@ -27,13 +28,18 @@ public class Autonomous_R1 extends LinearOpMode {
         telemetry.update();
         indianaGary.InitAll(hardwareMap);
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
         String Team_Color = "red";
 
-        waitForStart();
+        while (!opModeIsActive()) {
+            telemetry.addData("Status", "Initialized");
+            telemetry.addData("OTF Correction (use D-pad to change)", otf_correction);
+            telemetry.update();
+            if (gamepad1.dpad_up)   { otf_correction = otf_correction + 0.1; }
+            if (gamepad1.dpad_down) { otf_correction = otf_correction - 0.1; }
 
+        }
+
+        //waitForStart();
         runtime.reset();
 
         // run until the end of the match
@@ -54,7 +60,7 @@ public class Autonomous_R1 extends LinearOpMode {
 
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Drive(this, Drive_Power, 36 - jewelOffset + columnOffset);
+        indianaGary.drive.Drive(this, Drive_Power, 36 - jewelOffset + columnOffset + otf_correction);
 
         indianaGary.drive.Turn(this, -90);
 

@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 
 /**
@@ -100,11 +100,13 @@ public class MecanumDrive {
         }
     }
 
-    public void Drive(LinearOpMode op, double power, double distance){
+    public boolean Drive(LinearOpMode op, double power, double distance){
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ElapsedTime runtime = new ElapsedTime();
+        boolean successfulness = false;
         double scaleFactor = 83.33;
         double drivePower = power;
         double heading = imu.getAngularOrientation().firstAngle;
@@ -116,7 +118,8 @@ public class MecanumDrive {
         motorBR.setPower(power);
         motorFR.setPower(Math.signum(distance)*motorBL.getPower());
         motorFL.setPower(Math.signum(distance)*motorBL.getPower());
-        while (motorBL.isBusy() && op.opModeIsActive()){
+        runtime.reset();
+        while (motorBL.isBusy() && op.opModeIsActive() && runtime.seconds() < 3){
             if (Math.abs(motorBL.getCurrentPosition() - endPosition) < 500) {
                 drivePower = 0.05 + power * Math.abs(motorBL.getCurrentPosition() - endPosition)/500 ;
             }
@@ -139,6 +142,7 @@ public class MecanumDrive {
         op.telemetry.addData("BL Position", motorBL.getCurrentPosition());
         op.telemetry.update();
 
+        return successfulness;
     }
 
     public void Forward(LinearOpMode op, double power, double distance) {

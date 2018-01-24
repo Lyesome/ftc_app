@@ -92,7 +92,10 @@ public class DriverMode extends LinearOpMode {
             //telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.update();
 
-            indianaGary.drive.DriveControl(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_trigger);
+            indianaGary.drive.DriveControl(BotControls.DriveYStick(this),
+                                           BotControls.DriveXStick(this),
+                                           BotControls.TurnStick(this),
+                                           BotControls.DriveThrottle(this));
 
             //Glyph Grabber Control
             if (!indianaGary.myGlyphLifter.GRAB_LOCKED) {
