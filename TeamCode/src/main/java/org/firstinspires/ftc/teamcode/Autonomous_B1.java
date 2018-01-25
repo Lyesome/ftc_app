@@ -17,7 +17,7 @@ public class Autonomous_B1 extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jewelOffset = 0;
     private double columnOffset = 0;
-    private static double Drive_Power = 0.2;
+    private static double Drive_Power = 0.3;
 
     @Override
     public void runOpMode() {
@@ -47,14 +47,14 @@ public class Autonomous_B1 extends LinearOpMode {
         columnOffset = indianaGary.myVuMark.DecodeImage(this);
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
-        indianaGary.drive.Drive(this, Drive_Power, jewelOffset);
+        indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 5);
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Drive(this, Drive_Power, -36 - jewelOffset + columnOffset);
+        indianaGary.drive.Drive(this, Drive_Power, -36 - jewelOffset + columnOffset, 20);
 
         indianaGary.drive.Turn(this, -90);
 
-        indianaGary.drive.Drive(this, Drive_Power, 3);
+        indianaGary.drive.Drive(this, Drive_Power, 2, 3);
 
         indianaGary.myGlyphLifter.Release();
         indianaGary.myGlyphLifter.GotoPresetPosition(0);

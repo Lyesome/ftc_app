@@ -99,46 +99,46 @@ public class DriverMode extends LinearOpMode {
 
             //Glyph Grabber Control
             if (!indianaGary.myGlyphLifter.GRAB_LOCKED) {
-                indianaGary.myGlyphLifter.GrabberControl(gamepad2.right_trigger);
+                indianaGary.myGlyphLifter.GrabberControl(BotControls.GlyphGrabTrigger(this));
             }
             if (rtTogglePressed) {
                 rtToggleReleased = false;
             } else {
                 rtToggleReleased = true;
             }
-            rtTogglePressed = gamepad2.right_bumper;
+            rtTogglePressed = BotControls.GlyphGrabLockButton(this);
             if (rtToggleReleased){
-                if (gamepad2.right_bumper && !indianaGary.myGlyphLifter.GRAB_LOCKED){
+                if (BotControls.GlyphGrabLockButton(this) && !indianaGary.myGlyphLifter.GRAB_LOCKED){
                     indianaGary.myGlyphLifter.Grab();
                 } else {
-                    if (gamepad2.right_bumper && indianaGary.myGlyphLifter.GRAB_LOCKED) {
+                    if (BotControls.GlyphGrabLockButton(this) && indianaGary.myGlyphLifter.GRAB_LOCKED) {
                         indianaGary.myGlyphLifter.Release();
                     }
                 }
             }
 
             //Glyph Lifter Control
-            if (gamepad2.right_stick_y != 0) {
+            if (BotControls.GlyphLiftStick(this) != 0) {
                 autoLift = false;
-                indianaGary.myGlyphLifter.LifterControl(-gamepad2.right_stick_y);
+                indianaGary.myGlyphLifter.LifterControl(-BotControls.GlyphLiftStick(this));
                 //Turn off auto motion as soon as left stick is moved
                 telemetry.addData("Lifter at Position: ", indianaGary.myGlyphLifter.motorLift.getCurrentPosition());
                 telemetry.update();
             }else {
                 //Go to preset positions when corresponding button is pressed
-                if (gamepad2.a) {
+                if (BotControls.GlyphLiftMinButton(this)) {
                     autoLift = true;
                     indianaGary.myGlyphLifter.GotoPresetPosition(indianaGary.myGlyphLifter.POS_1);
                 }
-                if (gamepad2.x) {
+                if (BotControls.GlyphLiftLowButton(this)) {
                     autoLift = true;
                     indianaGary.myGlyphLifter.GotoPresetPosition(indianaGary.myGlyphLifter.POS_2);
                 }
-                if (gamepad2.y) {
+                if (BotControls.GlyphLiftHighButton(this)) {
                     autoLift = true;
                     indianaGary.myGlyphLifter.GotoPresetPosition(indianaGary.myGlyphLifter.POS_3);
                 }
-                if (gamepad2.b) {
+                if (BotControls.GlyphLiftMaxButton(this)) {
                     autoLift = true;
                     indianaGary.myGlyphLifter.GotoPresetPosition(indianaGary.myGlyphLifter.POS_MAX);
                 }
@@ -148,21 +148,21 @@ public class DriverMode extends LinearOpMode {
             }
 
             //Relic Capture Control
-            indianaGary.myRelicArm.ArmExtension(-gamepad2.left_stick_y);
+            indianaGary.myRelicArm.ArmExtension(-BotControls.RelicArmStick(this));
             telemetry.addData("Arm Position", indianaGary.myRelicArm.motorRelicArm.getCurrentPosition());
             telemetry.update();
 
             //The check for Relic Grabber's position is to prevent the Lifter from accidentally
             //lifting when the relic isn't being grabbed
-            if (gamepad2.dpad_up && indianaGary.myRelicArm.relicGrab.getPosition() > 0.25) {
+            if (BotControls.RelicLiftButton(this) && indianaGary.myRelicArm.relicGrab.getPosition() > 0.25) {
                 indianaGary.myRelicArm.Lift();
             }
-            if (gamepad2.dpad_down) {
+            if (BotControls.RelicLowerButton(this)) {
                 indianaGary.myRelicArm.Lower();
             }
 
             if (!indianaGary.myRelicArm.LOCKED) {
-                indianaGary.myRelicArm.GrabberControl(gamepad2.left_trigger);
+                indianaGary.myRelicArm.GrabberControl(BotControls.RelicGrabTrigger(this));
             }
 
             if (ltTogglePressed) {
@@ -170,12 +170,12 @@ public class DriverMode extends LinearOpMode {
             } else {
                 ltToggleReleased = true;
             }
-            ltTogglePressed = gamepad2.left_bumper;
+            ltTogglePressed = BotControls.RelicGrabLockButton(this);
             if (ltToggleReleased){
-                if (gamepad2.left_bumper && !indianaGary.myRelicArm.LOCKED) {
+                if (BotControls.RelicGrabLockButton(this) && !indianaGary.myRelicArm.LOCKED) {
                     indianaGary.myRelicArm.Grab();
                 } else {
-                    if (gamepad2.left_bumper && indianaGary.myRelicArm.LOCKED){
+                    if (BotControls.RelicGrabLockButton(this) && indianaGary.myRelicArm.LOCKED){
                         indianaGary.myRelicArm.Release();
                     }
 

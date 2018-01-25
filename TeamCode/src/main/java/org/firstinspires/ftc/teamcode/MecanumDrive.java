@@ -18,7 +18,6 @@ public class MecanumDrive {
     public DcMotor motorFR = null;
     public DcMotor motorBL = null;
     public DcMotor motorBR = null;
-    public static double Drive_Power = 0.5;
     public static double Turn_Power = 0.15;
     double DRIVE_POWER_MAX_LOW = 0.3; //Maximum drive power with not throttle
     // IMU sensor object
@@ -100,12 +99,12 @@ public class MecanumDrive {
         }
     }
 
-    public boolean Drive(LinearOpMode op, double power, double distance){
+    public boolean Drive(LinearOpMode op, double power, double distance, double timeout){
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        ElapsedTime runtime = new ElapsedTime();
+        ElapsedTime drivetime = new ElapsedTime();
         boolean successfulness = false;
         double scaleFactor = 83.33;
         double drivePower = power;
@@ -118,8 +117,8 @@ public class MecanumDrive {
         motorBR.setPower(power);
         motorFR.setPower(Math.signum(distance)*motorBL.getPower());
         motorFL.setPower(Math.signum(distance)*motorBL.getPower());
-        runtime.reset();
-        while (motorBL.isBusy() && op.opModeIsActive() && runtime.seconds() < 3){
+        drivetime.reset();
+        while (motorBL.isBusy() && op.opModeIsActive() && drivetime.seconds() < timeout){
             if (Math.abs(motorBL.getCurrentPosition() - endPosition) < 500) {
                 drivePower = 0.05 + power * Math.abs(motorBL.getCurrentPosition() - endPosition)/500 ;
             }
@@ -133,6 +132,11 @@ public class MecanumDrive {
             op.telemetry.addData("BR Position", motorBR.getCurrentPosition());
             op.telemetry.addData("BL Position", motorBL.getCurrentPosition());
             op.telemetry.update();
+        }
+        if (drivetime.seconds() < timeout){
+            successfulness = true;
+        } else {
+            successfulness = false;
         }
         StopWheels();
         op.telemetry.addData("Start", startPosition);

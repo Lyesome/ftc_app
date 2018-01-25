@@ -56,15 +56,15 @@ public class Autonomous_R1 extends LinearOpMode {
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
 
-        indianaGary.drive.Drive(this, Drive_Power, jewelOffset);
+        indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 5);
 
         indianaGary.myJewelArm.RaiseArm();
 
-        indianaGary.drive.Drive(this, Drive_Power, 36 - jewelOffset + columnOffset + otf_correction);
+        indianaGary.drive.Drive(this, Drive_Power, 36 - jewelOffset + columnOffset + otf_correction, 20);
 
         indianaGary.drive.Turn(this, -90);
 
-        indianaGary.drive.Drive(this, Drive_Power, 2);
+        indianaGary.drive.Drive(this, Drive_Power, 2, 3);
 
         indianaGary.myGlyphLifter.Release();
         indianaGary.myGlyphLifter.GotoPresetPosition(0);
