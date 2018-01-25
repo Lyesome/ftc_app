@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-
 /**
- * Created by maris on 2018-01-13.
+ * Created by Lyesome on 2018-01-13.
+ * This Class contains all the methods from controlling the drive system using mecanum wheels
  */
 
 public class MecanumDrive {
@@ -20,18 +20,18 @@ public class MecanumDrive {
     public DcMotor motorBR = null;
     public static double Turn_Power = 0.15;
     double DRIVE_POWER_MAX_LOW = 0.3; //Maximum drive power with not throttle
-    // IMU sensor object
+    // IMU sensor object (gyro)
     BNO055IMU imu;
 
     HardwareMap myHWMap;
 
-    public MecanumDrive(){
-
+    public MecanumDrive(){ //constructor
     }
 
     public void init(HardwareMap myNewHWMap){
         myHWMap = myNewHWMap;
 
+        //Initialize wheel motors
         motorFL  = myHWMap.dcMotor.get("motor_fl");
         motorFR  = myHWMap.dcMotor.get("motor_fr");
         motorBL  = myHWMap.dcMotor.get("motor_bl");
@@ -47,8 +47,6 @@ public class MecanumDrive {
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -68,18 +66,22 @@ public class MecanumDrive {
         imu.initialize(parameters);
     }
 
+    /**Method for manual control of drive system
+    yStick controls forward and backward motion
+    xStick controls lateral motion (strafe)
+    turnStick control rotation (turn)
+    Trigger controls the throttle (speed) */
     public void DriveControl(double yStick, double xStick, double turnStick, double trigger){
         double r = Math.hypot(xStick, yStick);
         double robotAngle = Math.atan2(-yStick, xStick) - Math.PI / 4;
-
-        //double rightX = -BotControls.TurnStick(this);
+        //Set minimum throttle value so the trigger does not need to be pressed to drive
         double trottle = trigger * (1-DRIVE_POWER_MAX_LOW) + DRIVE_POWER_MAX_LOW;
-        //double rightX = -BotControls.TurnStick(this);
-        double rightX = turnStick;
-        final double v1 = r * Math.cos(robotAngle) + Math.pow(rightX, 3);
-        final double v2 = r * Math.sin(robotAngle) - Math.pow(rightX, 3);
-        final double v3 = r * Math.sin(robotAngle) + Math.pow(rightX, 3);
-        final double v4 = r * Math.cos(robotAngle) - Math.pow(rightX, 3);
+        //Cube the value of turnstick so there's more control over low turn speeds
+        double rightX = Math.pow(turnStick, 3);
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
 
         motorFL.setPower(v1*trottle);
         motorFR.setPower(v2*trottle);
@@ -87,26 +89,34 @@ public class MecanumDrive {
         motorBR.setPower(v4*trottle);
     }
 
+    //Method to stop all power to the wheel motors
     public void StopWheels() {
         motorFR.setPower(0);
         motorBR.setPower(0);
         motorFL.setPower(0);
         motorBL.setPower(0);
-        try {
+        try { //Pause for amoment to let motion come to a stop
             Thread.sleep(500);
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
         }
     }
 
+    //Method for autonomous driving forward and backwards
+    //distance is specifed in inches (positive = drive forward, negative = drive backward)
+    //timeout value is used to interrupt drive routine if robot gets stuck
+    //and cannot reach the specified destination
+    //This method returns true of false to indicate if the robot successfully reached the target
     public boolean Drive(LinearOpMode op, double power, double distance, double timeout){
+        //Reset encoder values so target position is relative to the position the robot
+        //was at when the method was called
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ElapsedTime drivetime = new ElapsedTime();
         boolean successfulness = false;
-        double scaleFactor = 83.33;
+        double scaleFactor = 83.33; //Convert inches to encoder values
         double drivePower = power;
         double heading = imu.getAngularOrientation().firstAngle;
         int startPosition = motorBL.getCurrentPosition();
@@ -117,13 +127,19 @@ public class MecanumDrive {
         motorBR.setPower(power);
         motorFR.setPower(Math.signum(distance)*motorBL.getPower());
         motorFL.setPower(Math.signum(distance)*motorBL.getPower());
-        drivetime.reset();
+        drivetime.reset(); //start timeout timer
         while (motorBL.isBusy() && op.opModeIsActive() && drivetime.seconds() < timeout){
+            //Reduce drive power as robot nears the target to improve accuracy
             if (Math.abs(motorBL.getCurrentPosition() - endPosition) < 500) {
+                //0.05 prevents drivePower reducing so much that wheels won't turn
+                //and never reach their target positions
                 drivePower = 0.05 + power * Math.abs(motorBL.getCurrentPosition() - endPosition)/500 ;
             }
             motorBL.setPower(drivePower);
             motorBR.setPower(drivePower);
+            //Have front wheels copy what back wheels are doing
+            //in RUN_TO_POSITION mode, motor power is always indicated as positive so
+            //use sign of distance to tell front wheels which direction to turn
             motorFL.setPower(Math.signum(distance)*motorBL.getPower());
             motorFR.setPower(Math.signum(distance)*motorBR.getPower());
             op.telemetry.addData("Start", startPosition);
@@ -133,12 +149,13 @@ public class MecanumDrive {
             op.telemetry.addData("BL Position", motorBL.getCurrentPosition());
             op.telemetry.update();
         }
+        //if while loop completed before the timeout, then run was successful
         if (drivetime.seconds() < timeout){
             successfulness = true;
         } else {
             successfulness = false;
         }
-        StopWheels();
+        StopWheels(); //stop robot's motion before next method is called
         op.telemetry.addData("Start", startPosition);
         op.telemetry.addData("Heading", imu.getAngularOrientation().firstAngle);
         op.telemetry.addData("Go to", endPosition);
@@ -149,48 +166,10 @@ public class MecanumDrive {
         return successfulness;
     }
 
-    public void Forward(LinearOpMode op, double power, double distance) {
-        //Drive forward distance in inches. Use "scaleFactor" to convert inches to encoder values.
-
-        double scaleFactor = 86.116;
-        int startPosition = motorBL.getCurrentPosition();
-        int endPosition = (int) (startPosition + (distance * scaleFactor));
-        int threshold = 3;
-        double drivePower = power;
-         while (Math.signum(motorBL.getCurrentPosition() - endPosition) > threshold && op.opModeIsActive()) {
-            motorFL.setPower(drivePower);
-            motorFR.setPower(drivePower);
-            motorBL.setPower(drivePower);
-            motorBR.setPower(drivePower);
-            if (Math.abs(motorBL.getCurrentPosition() - endPosition) < 500) {
-                drivePower = power * Math.abs(motorBL.getCurrentPosition() - endPosition)/500 ;
-            }
-            op.telemetry.addData("Target Position", endPosition);
-            op.telemetry.addData("Current Position", motorBL.getCurrentPosition());
-            op.telemetry.addData("Remaining Distance", Math.signum(motorBL.getCurrentPosition() - endPosition));
-            op.telemetry.addData("Drive Power", drivePower);
-            op.telemetry.update();
-        }
-        StopWheels();
-
-    }
-
-    public void Backward(LinearOpMode op, double power, double distance) {
-        //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
-        double scaleFactor = 86.116;
-        double startPosition = motorBL.getCurrentPosition();
-        double endPosition = (startPosition - (distance * scaleFactor));
-        while (motorBL.getCurrentPosition() > endPosition && op.opModeIsActive()) {
-            motorFL.setPower(-power);
-            motorFR.setPower(-power);
-            motorBL.setPower(-power);
-            motorBR.setPower(-power);
-        }
-        StopWheels();
-    }
-
+    //Method for autonomous driving right
+    //Needs more testing, do not use
     public void Right(LinearOpMode op, double power, double distance) {
-        //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
+        //Drive distance in inches. Use "scaleFactor" to convert inches to encoder values.
         double scaleFactor = 116.94;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition - (distance * scaleFactor));
@@ -202,8 +181,11 @@ public class MecanumDrive {
         }
         StopWheels();
     }
+
+    //Method for autonomous driving left
+    //Needs more testing, do not use
     public void Left(LinearOpMode op, double power, double distance) {
-        //Drive backwards distance in inches. Use "scaleFactor" to convert inches to encoder values.
+        //Drive distance in inches. Use "scaleFactor" to convert inches to encoder values.
         double scaleFactor = 116.94;
         double startPosition = motorBL.getCurrentPosition();
         double endPosition = (startPosition + (distance * scaleFactor));
@@ -216,8 +198,9 @@ public class MecanumDrive {
         StopWheels();
     }
 
+    //Method for autonomous turning
+    // + is left (CCW), - is right (CW)
     public void Turn(LinearOpMode op, double Angle){
-        // + is left, - is right
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -228,6 +211,7 @@ public class MecanumDrive {
         double threshold = .1;
         double initalDiff;
         double difference;
+        //Correct for gyro's sign switch at 180
         if (Math.abs(initialAngle + Angle) > 180) {
             targetAngle = initialAngle + Angle - Math.signum(initialAngle + Angle)*360;
         } else {
@@ -235,10 +219,10 @@ public class MecanumDrive {
         }
         initalDiff = targetAngle - imu.getAngularOrientation().firstAngle;
         difference = initalDiff;
+        //Base turnPower off remaining turn angle
         while (Math.abs(difference) > threshold && op.opModeIsActive()) {
             turnPower = Math.signum(difference)*Math.sqrt(Math.abs(difference/initalDiff))/2;
-            if (Math.abs(difference) <= 180) {
-
+            if (Math.abs(difference) <= 180) { //Turn in the direction minimizes rhe turn angle
                 motorFL.setPower(-turnPower);
                 motorFR.setPower(turnPower);
                 motorBL.setPower(-turnPower);
@@ -259,31 +243,6 @@ public class MecanumDrive {
         StopWheels();
     }
 
-    public void TurnLeft(LinearOpMode op, double Angle){
 
-        double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle < (initialAngle + Angle) && op.opModeIsActive()) {
-            motorFL.setPower(-Turn_Power);
-            motorFR.setPower(Turn_Power);
-            motorBL.setPower(-Turn_Power);
-            motorBR.setPower(Turn_Power);
-            op.telemetry.addData("Target Angle", Angle);
-            op.telemetry.addData("Current Angle", imu.getAngularOrientation().firstAngle);
-            op.telemetry.update();
-
-        }
-        StopWheels();
-    }
-
-    public void TurnRight(LinearOpMode op, double Angle){
-        double initialAngle = imu.getAngularOrientation().firstAngle;
-        while (imu.getAngularOrientation().firstAngle > (initialAngle - Angle) && op.opModeIsActive()) {
-            motorFL.setPower(Turn_Power);
-            motorFR.setPower(-Turn_Power);
-            motorBL.setPower(Turn_Power);
-            motorBR.setPower(-Turn_Power);
-        }
-        StopWheels();
-    }
 
 }

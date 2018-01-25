@@ -3,13 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
- * Created by maris on 2018-01-13. EXPERIMENTAL
+ * Created by Lyesome on 2018-01-13.
+ * This class is used to pass the gamepad controls to generalized methods that the other classes can use.
+ * This allows all the controls to be defined in one location and makes it easier to change the controls if need.
  */
 
 public class BotControls {
 
     public BotControls()  { // constructor
-        }
+    }
 
 //GAMEPAD 1
     //Drive controls

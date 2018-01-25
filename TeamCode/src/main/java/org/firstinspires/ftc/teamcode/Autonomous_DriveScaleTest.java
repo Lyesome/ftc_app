@@ -57,13 +57,13 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
             //jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
             jewelOffset = -2;
             if (jewelOffset < 0){
-                indianaGary.drive.Drive(this, Drive_Power, jewelOffset);
+                indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 10);
             }
             if (jewelOffset > 0){
-                indianaGary.drive.Forward(this, Drive_Power, jewelOffset);
+                indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 10);
             }
             //indianaGary.myJewelArm.RaiseArm();
-             indianaGary.drive.Drive(this, 0.3, 36 - jewelOffset + columnOffset);
+             indianaGary.drive.Drive(this, 0.3, 36 - jewelOffset + columnOffset, 15);
             sleep(5000);
         //indianaGary.drive.motorBL.setTargetPosition(500);
         //indianaGary.drive.motorBL.setPower(0.2);

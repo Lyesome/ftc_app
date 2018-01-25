@@ -45,6 +45,8 @@ public class VuMarkDecoder {
         myHWMap = myNewHWMap;
         int cameraMonitorViewId = myHWMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", myHWMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        // OR...  Do Not Activate the Camera Monitor View, to save power
+        //VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters();
         vuparameters.vuforiaLicenseKey = "AfXDkbT/////AAAAGUWkW5XORUDZk0pzMnL5JlVLvMH8yBho/fstQbUOWSs+KpTGzK7G45wHLlm81SXcl71Youk9yLvlN8hblV/+U0s5aamvYKWA71dh8aiXVKYqoDyF5V70BbEXcfUXOcRphDBLUpnCLgVYPxr837L4Yc8RHPVlEYXAtbYKJAvjnMZurqHTSvQG4G/XV5QcFJaJPFyP9zC/sPlkGgdg/xDxYzkABnxDJFTlIKePvpgxCcednmCT6bG/hE5ZeuBxNtC7kWI0xqrG5L90Pq0UZ64Y87esm7DujazZ9YrRVkpNRXcM80kSm+27BrpPvubNeT1lxpRVAzsxZX5AXPAnrHUO3dMMx66HqXzp6X82OgLcHEL1";
         vuparameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
@@ -68,9 +70,9 @@ public class VuMarkDecoder {
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
-                    /* Found an instance of the template. In the actual game, you will probably
-                     * loop until this condition occurs, then move on to act accordingly depending
-                     * on which VuMark was visible. */
+            /* Found an instance of the template. In the actual game, you will probably
+             * loop until this condition occurs, then move on to act accordingly depending
+             * on which VuMark was visible. */
             if (vuMark == RelicRecoveryVuMark.LEFT) {
                 vuMarkColumnOffset = columnLeftOffset;
             }

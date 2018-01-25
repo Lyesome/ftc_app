@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Created by maris on 2018-01-13.
+ * Created by Lyesome on 2018-01-13.
+ * This class contains all the methods for controlling the Glyph Lifter
  */
 
 public class GlyphLifter {
@@ -27,11 +28,13 @@ public class GlyphLifter {
     int         POS_2;
     int         POS_3;
 
-    public void GlyphLifter() {
-
+    public void GlyphLifter() { //constructor
     }
+
     public void init(HardwareMap myNewHWMap) {
         myHWMap = myNewHWMap;
+
+        //Grabber Initialization
         grabberL = myHWMap.servo.get("servo_glyph_left");
         grabberR = myHWMap.servo.get("servo_glyph_right");
         grabberL.setDirection(Servo.Direction.REVERSE);
@@ -39,6 +42,7 @@ public class GlyphLifter {
         grabberL.setPosition(GRABBER_START);
         grabberR.setPosition(GRABBER_START);
 
+        //Lifter Initialization
         motorLift = myHWMap.dcMotor.get("motor_glyph_lifter");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -50,6 +54,7 @@ public class GlyphLifter {
         POS_3     = POS_START + 1500;
     }
 
+    //Method for manual control of the Glyph Grabbers
     public void GrabberControl(double trigger){
         if (trigger > 0) {
             grabberR.setPosition(trigger * (GRABBER_CLOSE - GRABBER_OPEN) + GRABBER_OPEN);
@@ -57,48 +62,51 @@ public class GlyphLifter {
         }
     }
 
+    //Method for manual control of the Lifter
     public void LifterControl(double stick){
+        //Make sure Lifter motor is using encoder when going to preset positions
+        //Do NOT reset the encoder or min and max positions will change
         motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if ((stick > 0) && (motorLift.getCurrentPosition() <= POS_MAX)) {
+            //POS_MAX limit is to prevent operator from trying to raise Lifter too high
             motorLift.setPower(stick*LIFT_UP_POWER);
         }else {
-            if ((stick < 0) && (motorLift.getCurrentPosition() >= POS_START)) {
+            if ((stick < 0) && (motorLift.getCurrentPosition() >= POS_1)) {
+                //POS_1 limit is to prevent operator from hitting the ground
                 motorLift.setPower(stick*LIFT_DOWN_POWER);
             } else {
                 motorLift.setPower(0);
             }
         }
-
     }
+
+    //Method to automatically grab Gylph and lift it high enough off ground so it doesn't get in the way of driving
     public void Capture(){
         grabberL.setPosition(GRABBER_CLOSE);
         grabberR.setPosition(GRABBER_CLOSE);
         GotoPresetPosition(POS_2);
-        //motorLift.setPower(0.2);
-        //try {
-        //    Thread.sleep(2000);
-        //} catch (InterruptedException e){
-        //    Thread.currentThread().interrupt();
-        //}
-        //motorLift.setPower(0.0);
     }
 
+    //Method to automatically move Lifter to specified position
+    //Position is specified as encoder values, not inches
     public void GotoPresetPosition(int gotoPosition){
         motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLift.setTargetPosition(gotoPosition);
         motorLift.setPower(0.6);
     }
 
+    //Method to automatically grab Gylph
     public void Grab(){
         grabberL.setPosition(GRABBER_CLOSE);
         grabberR.setPosition(GRABBER_CLOSE);
-        GRAB_LOCKED = true;
+        GRAB_LOCKED = true; //Set GRAB_LOCKED state for external inquiry
     }
 
+    //Method to automatically release Gylph
     public void Release(){
         grabberL.setPosition(GRABBER_RELEASE);
         grabberR.setPosition(GRABBER_RELEASE);
-        GRAB_LOCKED = false;
+        GRAB_LOCKED = false; //Set GRAB_LOCKED state for external inquiry
     }
 
 }
