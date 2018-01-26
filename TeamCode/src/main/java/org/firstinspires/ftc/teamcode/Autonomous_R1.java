@@ -34,9 +34,10 @@ public class Autonomous_R1 extends LinearOpMode {
             telemetry.addData("Status", "Initialized");
             telemetry.addData("OTF Correction (use D-pad to change)", otf_correction);
             telemetry.update();
+            //allow an "on-the-fly" correction to be applied to the drive distance
+            //use D-pad up and down to change
             if (gamepad1.dpad_up)   { otf_correction = otf_correction + 0.1; }
             if (gamepad1.dpad_down) { otf_correction = otf_correction - 0.1; }
-
         }
 
         //waitForStart();
@@ -49,31 +50,19 @@ public class Autonomous_R1 extends LinearOpMode {
 
 
         //Autonomous Commands
-
-
         indianaGary.myGlyphLifter.Capture();
         columnOffset = indianaGary.myVuMark.DecodeImage(this);
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
-
         indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 5);
-
         indianaGary.myJewelArm.RaiseArm();
-
         indianaGary.drive.Drive(this, Drive_Power, 36 - jewelOffset + columnOffset + otf_correction, 20);
-
         indianaGary.drive.Turn(this, -90);
-
         indianaGary.drive.Drive(this, Drive_Power, 2, 3);
-
         indianaGary.myGlyphLifter.Release();
-        indianaGary.myGlyphLifter.GotoPresetPosition(0);
-        sleep(1000);
-        //indianaGary.drive.Turn(this,180);
-        //indianaGary.myGlyphLifter.init(hardwareMap);
-        //indianaGary.drive.Drive(this, Drive_Power, -1);
-
+        indianaGary.myGlyphLifter.GotoPresetPosition(10);
+        sleep(1000); //give time for glyph to settle
+        indianaGary.drive.Turn(this,180);
+        indianaGary.drive.Drive(this, Drive_Power, -1, 5);
     }
-
-
 }

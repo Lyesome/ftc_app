@@ -3,24 +3,17 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 
 /**
- * Created by maris on 2018-01-13.
+ * Created by Lyesome on 2018-01-13.
+ * This class controls the phone's camera for detecting and decoding First Relic Recovery VuMarks
  */
 
 public class VuMarkDecoder {
@@ -30,17 +23,15 @@ public class VuMarkDecoder {
     public static final String TAG = "Vuforia VuMark Sample";
 
     VuforiaLocalizer vuforia;
-
-    OpenGLMatrix lastLocation = null;
+    //OpenGLMatrix lastLocation = null;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
 
 
-
-    public void VuMarkDecoder() {
-
+    public void VuMarkDecoder() { //constructor
     }
 
+    //Method to initialize camera decoder
     public void init(HardwareMap myNewHWMap) {
         myHWMap = myNewHWMap;
         int cameraMonitorViewId = myHWMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", myHWMap.appContext.getPackageName());
@@ -61,6 +52,7 @@ public class VuMarkDecoder {
 
     }
 
+    //Method to decode vumark and output the distance the correct column is from the center column
     public double DecodeImage(LinearOpMode op){
         //Decode Image and offset final robot position to line up with correct column
         //Return offset distance in inches
@@ -69,19 +61,14 @@ public class VuMarkDecoder {
         double columnLeftOffset = 7.5; //Offset in inches from center column; negative is closer to bot's starting position
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-
-            /* Found an instance of the template. In the actual game, you will probably
-             * loop until this condition occurs, then move on to act accordingly depending
-             * on which VuMark was visible. */
+            //If VuMark is detected, find out which one
             if (vuMark == RelicRecoveryVuMark.LEFT) {
                 vuMarkColumnOffset = columnLeftOffset;
             }
             if (vuMark == RelicRecoveryVuMark.RIGHT) {
                 vuMarkColumnOffset = columnRightOffset;
-           }
-        }
-        else {
-
+            }
+            //No need to check for CENTER since the center column is already the default end position
         }
         op.telemetry.addData("Column Offset", vuMarkColumnOffset);
         op.telemetry.update();

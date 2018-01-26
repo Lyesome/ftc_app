@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Lyesome on 2018-01-03.
  */
 
-@Autonomous(name="Drive Distance Scale Test", group="Tests")
+@Autonomous(name="Indiana Gary - Drive Scale Test", group="Tests")
 //@Disabled
 
 public class Autonomous_DriveScaleTest extends LinearOpMode {

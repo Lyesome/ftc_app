@@ -41,10 +41,7 @@ public class Autonomous_R2 extends LinearOpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
 
-
         //Autonomous Commands
-
-
         indianaGary.myGlyphLifter.Capture();
         columnOffset = indianaGary.myVuMark.DecodeImage(this);
         indianaGary.myJewelArm.LowerArm();
@@ -57,12 +54,9 @@ public class Autonomous_R2 extends LinearOpMode {
         indianaGary.drive.Turn(this, -90);
         indianaGary.drive.Drive(this, Drive_Power, 2, 3);
         indianaGary.myGlyphLifter.Release();
-        indianaGary.myGlyphLifter.GotoPresetPosition(0);
-        sleep(1000);
-        //indianaGary.drive.Turn(this,180);
+        indianaGary.myGlyphLifter.GotoPresetPosition(10);
+        sleep(1000);  //give time for glyph to settle
+        indianaGary.drive.Turn(this,180);
+        indianaGary.drive.Drive(this, Drive_Power, -1, 5);
     }
-
-
-
-
 }

@@ -24,7 +24,7 @@ public class Autonomous_B2 extends LinearOpMode {
         telemetry.addData("Status", "Initializing. Please Wait...");
         telemetry.update();
 
-        indianaGary.InitAll(hardwareMap);
+        indianaGary.InitAll(hardwareMap); //Initialize all hardware
         sleep(500);
 
         telemetry.addData("Status", "Initialized");
@@ -43,31 +43,21 @@ public class Autonomous_B2 extends LinearOpMode {
 
 
         //Autonomous Commands
-
         indianaGary.myGlyphLifter.Capture();
         columnOffset = indianaGary.myVuMark.DecodeImage(this);
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("red");
         indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 5);
         indianaGary.myJewelArm.RaiseArm();
-
         indianaGary.drive.Drive(this, Drive_Power, -28 - jewelOffset, 15);
-
-        //indianaGary.drive.TurnLeft(this,90);
         indianaGary.drive.Turn(this,90);
-
         indianaGary.drive.Drive(this, Drive_Power, 12 + columnOffset, 15);
         indianaGary.drive.Turn(this,90);
-        //indianaGary.drive.TurnLeft(this, 90);
-
         indianaGary.drive.Drive(this, Drive_Power, 2, 3);
-
         indianaGary.myGlyphLifter.Release();
         indianaGary.myGlyphLifter.GotoPresetPosition(0);
-
+        sleep(1000); //give time for glyph to settle
+        indianaGary.drive.Turn(this,180);
+        indianaGary.drive.Drive(this, Drive_Power, -1, 5);
     }
-
-
-
-
 }
