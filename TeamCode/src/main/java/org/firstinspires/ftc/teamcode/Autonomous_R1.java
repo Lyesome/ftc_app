@@ -18,15 +18,17 @@ public class Autonomous_R1 extends LinearOpMode {
     BotConfig indianaGary = new BotConfig();
     private double jewelOffset = 0;
     private double columnOffset = 0;
-    private double otf_correction = 0;
     private static double Drive_Power = 0.3;
+    private double otf_correction = 0;
+    private boolean buttonPressed;
 
     @Override
     public void runOpMode() {
 
         telemetry.addData("Status", "Initializing. Please Wait...");
         telemetry.update();
-        indianaGary.InitAll(hardwareMap);
+        indianaGary.InitAuto(hardwareMap);
+        indianaGary.myRelicArm.GrabberControl(indianaGary.myRelicArm.RELIC_GRAB_CLOSE);
 
         String Team_Color = "red";
 
@@ -36,8 +38,19 @@ public class Autonomous_R1 extends LinearOpMode {
             telemetry.update();
             //allow an "on-the-fly" correction to be applied to the drive distance
             //use D-pad up and down to change
-            if (gamepad1.dpad_up)   { otf_correction = otf_correction + 0.1; }
-            if (gamepad1.dpad_down) { otf_correction = otf_correction - 0.1; }
+            if (!buttonPressed){
+                if (gamepad1.dpad_up) {
+                    buttonPressed = true;
+                    otf_correction = otf_correction + 0.1;
+                }
+                if (gamepad1.dpad_down) {
+                    buttonPressed = true;
+                    otf_correction = otf_correction - 0.1;
+                }
+            }
+            if (!gamepad1.dpad_up && !gamepad1.dpad_down) {
+                buttonPressed = false;
+            }
         }
 
         //waitForStart();
@@ -56,13 +69,12 @@ public class Autonomous_R1 extends LinearOpMode {
         jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
         indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 5);
         indianaGary.myJewelArm.RaiseArm();
-        indianaGary.drive.Drive(this, Drive_Power, 36 - jewelOffset + columnOffset + otf_correction, 20);
+        indianaGary.drive.Drive(this, Drive_Power, 32 - jewelOffset + columnOffset + otf_correction, 20);
         indianaGary.drive.Turn(this, -90);
-        indianaGary.drive.Drive(this, Drive_Power, 2, 3);
+        indianaGary.drive.Drive(this, Drive_Power, 3, 4);
         indianaGary.myGlyphLifter.Release();
-        indianaGary.myGlyphLifter.GotoPresetPosition(10);
-        sleep(1000); //give time for glyph to settle
-        indianaGary.drive.Turn(this,180);
-        indianaGary.drive.Drive(this, Drive_Power, -1, 5);
+        indianaGary.myGlyphLifter.GotoPresetPosition(20);
+        indianaGary.myGlyphLifter.grabberL.setPosition(indianaGary.myGlyphLifter.GRABBER_OPEN);
+        indianaGary.myGlyphLifter.grabberR.setPosition(indianaGary.myGlyphLifter.GRABBER_OPEN);
     }
 }

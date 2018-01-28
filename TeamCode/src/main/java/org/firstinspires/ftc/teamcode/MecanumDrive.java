@@ -28,7 +28,7 @@ public class MecanumDrive {
     public MecanumDrive(){ //constructor
     }
 
-    public void init(HardwareMap myNewHWMap){
+    public void initAuto(HardwareMap myNewHWMap){
         myHWMap = myNewHWMap;
 
         //Initialize wheel motors
@@ -64,6 +64,25 @@ public class MecanumDrive {
         // and named "imu".
         imu = myHWMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+    }
+
+    public void initTele(HardwareMap myNewHWMap) {
+        myHWMap = myNewHWMap;
+
+        //Initialize wheel motors
+        motorFL = myHWMap.dcMotor.get("motor_fl");
+        motorFR = myHWMap.dcMotor.get("motor_fr");
+        motorBL = myHWMap.dcMotor.get("motor_bl");
+        motorBR = myHWMap.dcMotor.get("motor_br");
+
+        // eg: Set the drive motor directions:
+        // "Reverse" the motor that runs backwards when connected directly to the battery
+        motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorFR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorBL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorBR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**Method for manual control of drive system

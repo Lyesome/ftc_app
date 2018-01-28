@@ -27,7 +27,7 @@ public class Autonomous_DriveScaleTest extends LinearOpMode {
         telemetry.addData("Status", "Initializing. Please Wait...");
         telemetry.update();
 
-        indianaGary.drive.init(hardwareMap);
+        indianaGary.drive.initAuto(hardwareMap);
         indianaGary.myJewelArm.init(hardwareMap);
         indianaGary.myGlyphLifter.init(hardwareMap);
         //indianaGary.myVuMark.init(hardwareMap);

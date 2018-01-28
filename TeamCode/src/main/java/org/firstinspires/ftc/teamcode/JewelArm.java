@@ -6,21 +6,23 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Created by maris on 2018-01-13.
+ * Created by Lyesome on 2018-01-13.
+ * This class contains all the methods for controlling the Jewel Arm
  */
 
 public class JewelArm {
+    HardwareMap myHWMap;
     private ColorSensor colorSensorF;    // Hardware Device Object
     private ColorSensor colorSensorB;
     private Servo jewelArm = null;
-    HardwareMap myHWMap;
     final double KNOCK_DISTANCE = 2;
-    final double UP_POSITION = 0.25;
-    final double DOWN_POSITION = 0.88;
+    final double UP_POSITION = 0.0;
+    final double DOWN_POSITION = 0.60;
 
-    public void JewelArm(){
-
+    public void JewelArm(){ //constructor
     }
+
+    //Method to initialize all the Jewel Arm hardware
     public void init(HardwareMap myNewHWMap){
         myHWMap = myNewHWMap;
 
@@ -47,7 +49,7 @@ public class JewelArm {
         jewelArm.setPosition(UP_POSITION);
     }
 
-    //Methdd to automatically lower the Jewel Arm
+    //Method to automatically lower the Jewel Arm
     public  void LowerArm(){
         jewelArm.setPosition(DOWN_POSITION);
 
@@ -105,7 +107,7 @@ public class JewelArm {
         2 = Red in Back position
     */
     private int ColorRedTestFront() {
-        int result = 0;
+        int result;
         //Jewels can color readings up to 4 of the opposite color
         //To start, only compare front and back color sensor readings above 4
         //to catch when only one jewel is detected.

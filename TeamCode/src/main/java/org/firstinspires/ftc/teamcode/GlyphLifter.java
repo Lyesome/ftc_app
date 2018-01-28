@@ -17,8 +17,8 @@ public class GlyphLifter {
     public      Servo grabberL      = null;
     double      GRABBER_START       =  0.0;
     double      GRABBER_OPEN        =  0.3;
-    double      GRABBER_RELEASE     =  0.6;
-    double      GRABBER_CLOSE       =  0.8;
+    double      GRABBER_RELEASE     =  0.5;
+    double      GRABBER_CLOSE       =  0.7;
     double      LIFT_UP_POWER       =  0.5;
     double      LIFT_DOWN_POWER     =  0.3;
     boolean     GRAB_LOCKED         = false;
@@ -39,6 +39,7 @@ public class GlyphLifter {
         grabberR = myHWMap.servo.get("servo_glyph_right");
         grabberL.setDirection(Servo.Direction.REVERSE);
         grabberR.setDirection(Servo.Direction.FORWARD);
+
         grabberL.setPosition(GRABBER_START);
         grabberR.setPosition(GRABBER_START);
 

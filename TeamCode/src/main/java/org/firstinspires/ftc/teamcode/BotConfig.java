@@ -23,11 +23,17 @@ public class BotConfig {
     }
 
     //Method to initialize all the Hardware
-    public void InitAll(HardwareMap myNewHWMap){
+    public void InitAuto(HardwareMap myNewHWMap){
+        myJewelArm.init(myNewHWMap); //need to initialize to prevent arm from dropping
+        myGlyphLifter.init(myNewHWMap);
+        myRelicArm.init(myNewHWMap);
+        myVuMark.init(myNewHWMap);
+        drive.initAuto(myNewHWMap);
+    }
+    public void InitTele(HardwareMap myNewHWMap){
         myJewelArm.init(myNewHWMap); //need to initialize to prevent arm from dropping
         myRelicArm.init(myNewHWMap);
         myGlyphLifter.init(myNewHWMap);
-        drive.init(myNewHWMap);
-        myVuMark.init(myNewHWMap);
+        drive.initTele(myNewHWMap);
     }
 }

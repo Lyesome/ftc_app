@@ -34,10 +34,8 @@ public class DriverMode extends LinearOpMode {
         //Provide warning for drivers not to hit play until initializing is complete.
         telemetry.addData("Status", "Initializing. Please Wait...");
         telemetry.update();
-        indianaGary.InitAll(hardwareMap);
+        indianaGary.InitTele(hardwareMap);
         //for manual driving encoder is not needed in the drive motors.
-        indianaGary.drive.motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        indianaGary.drive.motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Set toggle initial states
         boolean rtTogglePressed = false;
