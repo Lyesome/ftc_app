@@ -40,6 +40,24 @@ public class JewelArm {
         colorSensorB.enableLed(false);
     }
 
+    public void initSensors(HardwareMap myNewHWMap){
+        myHWMap = myNewHWMap;
+        //Initialize both color sensors (F = Front, B = Back)
+        colorSensorF = myHWMap.get(ColorSensor.class, "sensor_color_f");
+        colorSensorB = myHWMap.get(ColorSensor.class, "sensor_color_b");
+        colorSensorB.setI2cAddress(I2cAddr.create8bit(0x3a)); //assign back color sensor to altered address
+        //Turn off LEDS to save power
+        colorSensorF.enableLed(false);
+        colorSensorB.enableLed(false);
+    }
+
+    public void initServos(HardwareMap myNewHWMap){
+        myHWMap = myNewHWMap;
+        jewelArm = myHWMap.servo.get("servo_jewel_arm");
+        jewelArm.setDirection(Servo.Direction.REVERSE);
+        jewelArm.setPosition(UP_POSITION);
+    }
+
     //Method to automatically raise the Jewel Arm
     public void RaiseArm() {
         //Turn off LEDS to save power

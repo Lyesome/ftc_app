@@ -36,4 +36,21 @@ public class BotConfig {
         myGlyphLifter.init(myNewHWMap);
         drive.initTele(myNewHWMap);
     }
+
+    public void InitServos(HardwareMap myNewHWMap){
+        myJewelArm.initServos(myNewHWMap);
+        myRelicArm.initServos(myNewHWMap);
+        myGlyphLifter.initServos(myNewHWMap);
+    }
+    public void InitMotors(HardwareMap myNewHWMap){
+        myRelicArm.initMotor(myNewHWMap);
+        myGlyphLifter.initMotor(myNewHWMap);
+        drive.initMotors(myNewHWMap);
+    }
+    public void InitSensors(HardwareMap myNewHWMap){
+        myJewelArm.initSensors(myNewHWMap);
+        drive.initGyro(myNewHWMap);
+        myVuMark.init(myNewHWMap);
+    }
+
 }

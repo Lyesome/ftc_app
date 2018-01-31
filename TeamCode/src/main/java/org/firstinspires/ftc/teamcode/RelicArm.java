@@ -23,7 +23,7 @@ public class RelicArm {
     //double LOCK = 0.1;
     boolean LOCKED = false;
     double RELIC_LIFT_DOWN =  0.585;
-    double RELIC_LIFT_UP =    0.64;
+    double RELIC_LIFT_UP =    0.66;
     double RELIC_GRAB_OPEN =  0.05;
     double RELIC_GRAB_CLOSE = 0.45;
 
@@ -32,18 +32,30 @@ public class RelicArm {
     public void RelicArm(){ //constructor
     }
 
+    public void initMotor(HardwareMap myNewHWMap) {
+        myHWMap = myNewHWMap;
+        //Relic Extending Arm
+        motorRelicArm = myHWMap.dcMotor.get("motor_relic_arm");
+        motorRelicArm.setDirection(DcMotor.Direction.FORWARD);
+        motorRelicArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRelicArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Set minimum and maximum extension of the Relic Arm
+        POS_MIN = motorRelicArm.getCurrentPosition();
+        POS_MAX = POS_MIN + 6000;
+    }
     //This method initializes the hardware on the relic arm
     public void init(HardwareMap myNewHWMap) {
         myHWMap = myNewHWMap;
 
         //Relic Grabber
         relicGrab = myHWMap.servo.get("servo_relic_capture");
-        relicLift = myHWMap.servo.get("servo_relic_lift");
-        //relicLock = myHWMap.servo.get("servo_relic_lock");
-        relicLift.setDirection(Servo.Direction.REVERSE);
-        relicLift.setPosition(RELIC_LIFT_DOWN);
         relicGrab.setDirection(Servo.Direction.REVERSE);
         relicGrab.setPosition(RELIC_GRAB_OPEN);
+        relicLift = myHWMap.servo.get("servo_relic_lift");
+        relicLift.setDirection(Servo.Direction.REVERSE);
+        relicLift.setPosition(RELIC_LIFT_DOWN);
+        //relicLock = myHWMap.servo.get("servo_relic_lock");
         //relicLock.setPosition(UNLOCK);
 
         //Relic Extending Arm
@@ -55,6 +67,17 @@ public class RelicArm {
         //Set minimum and maximum extension of the Relic Arm
         POS_MIN = motorRelicArm.getCurrentPosition();
         POS_MAX = POS_MIN + 6000;
+    }
+
+    public void initServos(HardwareMap myNewHWMap){
+        myHWMap = myNewHWMap;
+        relicGrab = myHWMap.servo.get("servo_relic_capture");
+        relicGrab.setDirection(Servo.Direction.REVERSE);
+        relicGrab.setPosition(RELIC_GRAB_CLOSE);
+        relicLift = myHWMap.servo.get("servo_relic_lift");
+        relicLift.setDirection(Servo.Direction.REVERSE);
+        relicLift.setPosition(RELIC_LIFT_DOWN);
+        //relicLock = myHWMap.servo.get("servo_relic_lock");
     }
 
     //These methods are used to lift and lower the relic after it's been grabbed

@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Created by Lyesome on 2018-01-03.
  */
@@ -25,12 +27,22 @@ public class Autonomous_R2 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        telemetry.addData("Status", "Initializing. Please Wait...");
+        telemetry.setAutoClear(false);
+        telemetry.addLine("Status: Initializing. Please Wait...");
         telemetry.update();
         indianaGary.InitAuto(hardwareMap);
-        indianaGary.myRelicArm.GrabberControl(indianaGary.myRelicArm.RELIC_GRAB_CLOSE);
+        //indianaGary.InitServos(hardwareMap);
+        //telemetry.addLine("Servos Initialized");
+        //indianaGary.InitMotors(hardwareMap);
+        //telemetry.addLine("Motors Initialized");
+        //indianaGary.InitSensors(hardwareMap);
+        telemetry.addLine("Sensors Initialized");
+        AutoTransitioner.transitionOnStop(this, "Driver Mode");
 
         String Team_Color = "red";
+
+        telemetry.addLine("Status Initialized");
+        Telemetry.Item otf = telemetry.addData("OTF Correction (use D-pad to change)", 0);
         while (!opModeIsActive()) {
             telemetry.addData("Status", "Initialized");
             telemetry.addData("OTF Correction (use D-pad to change)", otf_correction);
@@ -62,16 +74,25 @@ public class Autonomous_R2 extends LinearOpMode {
         telemetry.update();
 
         //Autonomous Commands
-        indianaGary.myGlyphLifter.Capture();
+        indianaGary.myGlyphLifter.Capture(this);
         columnOffset = indianaGary.myVuMark.DecodeImage(this);
         indianaGary.myJewelArm.LowerArm();
         jewelOffset = indianaGary.myJewelArm.JewelKnock("blue");
+        if (jewelOffset < 0) {
+            telemetry.addLine("Jewel on FRONT");
+        } else {
+            if (jewelOffset > 0) {
+                telemetry.addLine("Jewel on BACK");
+            } else {
+                telemetry.addLine("Jewel UNKNOWN");
+            }
+        }
         indianaGary.drive.Drive(this, Drive_Power, jewelOffset, 5);
         indianaGary.myJewelArm.RaiseArm();
         indianaGary.drive.Drive(this, Drive_Power, 15 - jewelOffset, 15);
-        indianaGary.drive.Turn(this, 90);
+        indianaGary.drive.Turn(this, 90, 10);
         indianaGary.drive.Drive(this, Drive_Power, 8 + columnOffset  + otf_correction, 15);
-        indianaGary.drive.Turn(this, -90);
+        indianaGary.drive.Turn(this, -90, 10);
         indianaGary.drive.Drive(this, Drive_Power, 5, 3);
         indianaGary.myGlyphLifter.Release();
         indianaGary.myGlyphLifter.GotoPresetPosition(20);

@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -34,7 +33,9 @@ public class DriverMode extends LinearOpMode {
         //Provide warning for drivers not to hit play until initializing is complete.
         telemetry.addData("Status", "Initializing. Please Wait...");
         telemetry.update();
-        indianaGary.InitTele(hardwareMap);
+        //indianaGary.InitTele(hardwareMap);
+        indianaGary.InitServos(hardwareMap);
+        indianaGary.InitMotors(hardwareMap);
         //for manual driving encoder is not needed in the drive motors.
 
         //Set toggle initial states
@@ -44,6 +45,7 @@ public class DriverMode extends LinearOpMode {
         boolean ltToggleReleased = true;
         boolean autoLift = false; //Used to enable auto motion of Glyph Lifter to preset Positions
         //tell drivers that initializing is now complete
+        telemetry.setAutoClear(true);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -51,6 +53,7 @@ public class DriverMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        indianaGary.myRelicArm.relicGrab.setPosition(indianaGary.myRelicArm.RELIC_GRAB_OPEN);
 
 
         // run until the end of the match (driver presses STOP)

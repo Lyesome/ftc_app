@@ -35,9 +35,9 @@ public class VuMarkDecoder {
     public void init(HardwareMap myNewHWMap) {
         myHWMap = myNewHWMap;
         int cameraMonitorViewId = myHWMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", myHWMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId); //CAMERA DISPLAY ON
         // OR...  Do Not Activate the Camera Monitor View, to save power
-        //VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters();
+        //VuforiaLocalizer.Parameters vuparameters = new VuforiaLocalizer.Parameters(); //CAMERA DISPLAY OFF
         vuparameters.vuforiaLicenseKey = "AfXDkbT/////AAAAGUWkW5XORUDZk0pzMnL5JlVLvMH8yBho/fstQbUOWSs+KpTGzK7G45wHLlm81SXcl71Youk9yLvlN8hblV/+U0s5aamvYKWA71dh8aiXVKYqoDyF5V70BbEXcfUXOcRphDBLUpnCLgVYPxr837L4Yc8RHPVlEYXAtbYKJAvjnMZurqHTSvQG4G/XV5QcFJaJPFyP9zC/sPlkGgdg/xDxYzkABnxDJFTlIKePvpgxCcednmCT6bG/hE5ZeuBxNtC7kWI0xqrG5L90Pq0UZ64Y87esm7DujazZ9YrRVkpNRXcM80kSm+27BrpPvubNeT1lxpRVAzsxZX5AXPAnrHUO3dMMx66HqXzp6X82OgLcHEL1";
         vuparameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
@@ -64,14 +64,18 @@ public class VuMarkDecoder {
             //If VuMark is detected, find out which one
             if (vuMark == RelicRecoveryVuMark.LEFT) {
                 vuMarkColumnOffset = columnLeftOffset;
+                op.telemetry.addLine("LEFT Column");
             }
             if (vuMark == RelicRecoveryVuMark.RIGHT) {
                 vuMarkColumnOffset = columnRightOffset;
+                op.telemetry.addLine("RIGHT Column");
             }
-            //No need to check for CENTER since the center column is already the default end position
+            if (vuMark == RelicRecoveryVuMark.CENTER) {
+                op.telemetry.addLine("CENTER Column");
+            }
+        } else {
+            op.telemetry.addLine("UNKNOWN Column");
         }
-        op.telemetry.addData("Column Offset", vuMarkColumnOffset);
-        op.telemetry.update();
         return vuMarkColumnOffset;
     }
 

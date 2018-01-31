@@ -66,6 +66,47 @@ public class MecanumDrive {
         imu.initialize(parameters);
     }
 
+    public void initMotors(HardwareMap myNewHWMap) {
+        myHWMap = myNewHWMap;
+
+        //Initialize wheel motors
+        motorFL = myHWMap.dcMotor.get("motor_fl");
+        motorFR = myHWMap.dcMotor.get("motor_fr");
+        motorBL = myHWMap.dcMotor.get("motor_bl");
+        motorBR = myHWMap.dcMotor.get("motor_br");
+
+        // eg: Set the drive motor directions:
+        // "Reverse" the motor that runs backwards when connected directly to the battery
+        motorFL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorFR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorBL.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorBR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void initGyro(HardwareMap myNewHWMap) {
+        myHWMap = myNewHWMap;
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = myHWMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+    }
+
     public void initTele(HardwareMap myNewHWMap) {
         myHWMap = myNewHWMap;
 
@@ -94,7 +135,8 @@ public class MecanumDrive {
         double r = Math.hypot(xStick, yStick);
         double robotAngle = Math.atan2(-yStick, xStick) - Math.PI / 4;
         //Set minimum throttle value so the trigger does not need to be pressed to drive
-        double trottle = trigger * (1-DRIVE_POWER_MAX_LOW) + DRIVE_POWER_MAX_LOW;
+        double trottle = 1 - trigger * (1-DRIVE_POWER_MAX_LOW);
+        //double trottle = trigger * (1-DRIVE_POWER_MAX_LOW) + DRIVE_POWER_MAX_LOW;
         //Cube the value of turnstick so there's more control over low turn speeds
         double rightX = Math.pow(turnStick, 3);
         final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -219,7 +261,8 @@ public class MecanumDrive {
 
     //Method for autonomous turning
     // + is left (CCW), - is right (CW)
-    public void Turn(LinearOpMode op, double Angle){
+    public void Turn(LinearOpMode op, double Angle, double timeout){
+        ElapsedTime drivetime = new ElapsedTime();
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -239,7 +282,7 @@ public class MecanumDrive {
         initalDiff = targetAngle - imu.getAngularOrientation().firstAngle;
         difference = initalDiff;
         //Base turnPower off remaining turn angle
-        while (Math.abs(difference) > threshold && op.opModeIsActive()) {
+        while (Math.abs(difference) > threshold && op.opModeIsActive() && drivetime.seconds() < timeout) {
             turnPower = Math.signum(difference)*Math.sqrt(Math.abs(difference/initalDiff))/2;
             if (Math.abs(difference) <= 180) { //Turn in the direction minimizes rhe turn angle
                 motorFL.setPower(-turnPower);
