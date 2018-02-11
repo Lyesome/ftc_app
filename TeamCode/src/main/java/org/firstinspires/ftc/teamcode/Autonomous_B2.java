@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Created by Lyesome on 2018-01-03.
  */
 
-@Autonomous(name="Indiana Gary - Blue Left", group="Linear Opmode")
+@Autonomous(name="Indiana Gary - Blue Left", group="Linear Opmode - After Auto")
 //@Disabled
 
 public class Autonomous_B2 extends LinearOpMode {

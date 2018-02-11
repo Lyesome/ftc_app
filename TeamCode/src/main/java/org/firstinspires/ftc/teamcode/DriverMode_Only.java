@@ -12,9 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * This file contains all the instructions for controlling the robot in Teleop mode.
  */
 
-@TeleOp(name="Driver Mode", group="Linear OpMode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Driver Mode - Only", group="Linear OpMode")  // @Autonomous(...) is the other common choice
 //@Disabled
-public class DriverMode extends LinearOpMode {
+public class DriverMode_Only extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();

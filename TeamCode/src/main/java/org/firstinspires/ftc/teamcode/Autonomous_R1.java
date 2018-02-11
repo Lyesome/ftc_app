@@ -37,7 +37,7 @@ public class Autonomous_R1 extends LinearOpMode {
         //telemetry.addLine("Motors Initialized");
         //indianaGary.InitSensors(hardwareMap);
         telemetry.addLine("Sensors Initialized");
-        AutoTransitioner.transitionOnStop(this, "Driver Mode");
+        AutoTransitioner.transitionOnStop(this, "Driver Mode - After Auto");
 
         String Team_Color = "red";
 
